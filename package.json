@@ -1,0 +1,19 @@
+{
+  "name": "wildlink-api-js",
+  "version": "1.0.0",
+  "description": "A simple JavaScript interface for the Wildlink API (learn more at https://www.wildlink.me/)",
+  "main": "src/WildlinkApi/WildlinkClient.js",
+  "repository": "https://github.com/wildlink/wildlink-api-js.git",
+  "author": "Vincent Pham <vincentvpham@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  }
+}

@@ -1,0 +1,19 @@
+  {
+    "name": "Wildlink Clipboard Monitor Example",
+    "version": "1.0",
+    "description": "Watch the clipboard and convert any eligible URLs into Wildlinks!",
+    "permissions": [
+      "storage",
+      "notifications",
+      "clipboardWrite",
+      "clipboardRead",
+      "background"
+    ],
+    "background": {
+      "scripts": [
+        "src/build/background.js"
+      ],
+      "persistent": false
+    },
+    "manifest_version": 2
+  }
