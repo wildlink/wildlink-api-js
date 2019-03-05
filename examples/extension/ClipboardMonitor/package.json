@@ -1,0 +1,18 @@
+{
+  "name": "ClipboardMonitor",
+  "version": "1.0.0",
+  "description": "Wildlink clipboard monitor example",
+  "main": "background.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel watch src/background.js -d src/build",
+    "build": "parcel build src/background.js -d src/build"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "parcel-bundler": "^1.11.0",
+    "parse-domain": "^2.1.7",
+    "webextension-polyfill": "^0.4.0",
+    "wildlink-api-js": "https://github.com/wildlink/wildlink-api-js"
+  }
+}
