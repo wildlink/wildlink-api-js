@@ -31,7 +31,7 @@ const deviceId = WLClient.getDeviceId();
 const deviceToken = WLClient.getDeviceToken();
 ```
 
-Note: To obtain an APP_ID and APP_SECRET contact support@wildlink.me
+Note: To obtain an `APP_ID` and `APP_SECRET` contact support@wildlink.me
 
 
 ### Get Supported Merchant Domains
@@ -90,6 +90,6 @@ console.log(vanity);
 ```js
 {
   OriginalURL: "https://www.target.com",
-  ShortURL: "http://dev.wild.link/target/AK2vBQ"
+  ShortURL: "http://wild.link/target/AK2vBQ"
 }
 ```
