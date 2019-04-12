@@ -1,13 +1,15 @@
 import browser from 'webextension-polyfill';
 import parseDomain from 'parse-domain';
 
-import asyncWLClient from './WildlinkClient';
+import WildlinkClient from './WildlinkClient';
 
 import icon from './icon.png';
 
 export const getMerchantDomains = async () => {
-  const WLClient = await asyncWLClient;
-  const { domainsLastFetched } = await browser.storage.local.get(['domainsLastFetched']);
+  const WLClient = await WildlinkClient();
+  const { domainsLastFetched } = await browser.storage.local.get([
+    'domainsLastFetched',
+  ]);
   const msSinceLastFetch = Date.now() - domainsLastFetched;
   // store and refresh the domain list every 24 hours
   if (!domainsLastFetched || msSinceLastFetch > 1000 * 60 * 60 * 24) {
@@ -15,7 +17,7 @@ export const getMerchantDomains = async () => {
       const merchantDomains = await WLClient.getDomains();
       const domains = {};
       // create a map of merchant domains for quicker lookup
-      merchantDomains.forEach(merchant => {
+      merchantDomains.forEach((merchant) => {
         domains[merchant.Value] = merchant.ID;
       });
       await browser.storage.local.set({
@@ -31,7 +33,10 @@ export const getMerchantDomains = async () => {
   return domains;
 };
 
-export const getDomain = url => {
+/**
+ * @param {string} url - URL to extract domain and domain with subdomain from.
+ */
+export const getDomain = (url) => {
   const parsedUrl = parseDomain(url);
   // returns null if unknown tld or invalid url
   if (parsedUrl !== null) {
@@ -41,15 +46,21 @@ export const getDomain = url => {
     // so we have to check that as well
     return [domain, withSubdomain];
   }
-  return false;
+  return [];
 };
 
-export const startsWithHttp = string => {
+/**
+ * @param {string} string - String to check if it starts with 'http'.
+ */
+export const startsWithHttp = (string) => {
   const protocol = string.slice(0, 4);
   return protocol === 'http';
 };
 
-export const wildlinkCopiedNotification = wildlink => {
+/**
+ * @param {string} wildlink - Wildlink vanity URL to use as an ID for extension notification.
+ */
+export const wildlinkCopiedNotification = (wildlink) => {
   const notificationOptions = {
     type: 'basic',
     // must be relative to manifest.json

@@ -1,48 +1,54 @@
-# wildlink-api-js
+# wildlink-js-client
 
-JavaScript client for working with Wildfire/Wildlink APIs. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
+JavaScript client library for working with Wildfire/Wildlink APIs. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
 
 ## Installation
 
 With Yarn:
 
-```yarn add https://github.com/wildlink/wildlink-api-js```
+`yarn add https://github.com/wildlink/wildlink-js-client`
 
 ## Usage
 
 ### Instantiation
+
 ```js
-const WildlinkClient = require('wildlink-api-js');
+// 1. Load
+const WildlinkClient = require('wildlink-js-client');
 
-// minimum auth, NOTE: this creates a new device
-const WLClient = new WildlinkClient(APP_ID, APP_SECRET);
+// 2. Create instance of WildlinkClient
+const WLClient = new WildlinkClient('SECRET');
 
-// create a new "session" for a previously created device (fetches a new deviceToken from Wildfire server)
-const WLClient = new WildlinkClient(APP_ID, APP_SECRET, DEVICE_KEY);
-
-// prepare to make a new request with a previously stored device key and device auth token (no Wildfire server hit)
-const WLClient = new WildlinkClient(APP_ID, APP_SECRET, DEVICE_KEY, DEVICE_TOKEN);
-
-// Device Key is used for authing the device in the future - it doesn't expire
-const deviceKey = WLClient.getDeviceKey();
-// Device ID is used for referencing device in reporting data
-const deviceId = WLClient.getDeviceId();
-// Device Token is used for authing device - it expires
-const deviceToken = WLClient.getDeviceToken();
+// 3. Initialize
+WLClient.init({
+  // deviceKey and deviceToken are both optional and a new device will be created if both are omitted
+  deviceKey: 'DEVICE_KEY', // Create a new "session" with a previously created device
+  deviceToken: 'DEVICE_TOKEN', // Use a previously stored device
+}).then(() => {
+  // deviceId is used for referencing the device in reporting data
+  const deviceId = WLClient.getDeviceId();
+  // deviceKey is used for authenticating the device in the future - it doesn't expire
+  const deviceKey = WLClient.getDeviceKey();
+  // deviceToken is used for authenticating the device - it expires
+  const deviceToken = WLClient.getDeviceToken();
+  // 4. Make API requests (see below)
+});
 ```
 
-Note: To obtain an `APP_ID` and `APP_SECRET` contact support@wildlink.me
-
+Note: To obtain a `SECRET` contact support@wildlink.me
 
 ### Get Supported Merchant Domains
+
 The `getDomains` call fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call.
 
 ```js
-const domains = await WLClient.getDomains();
-console.log(domains);
+WLClient.getDomains().then((domains) => {
+  console.log(domains);
+});
 ```
 
 #### Example return
+
 ```js
 [
   {
@@ -80,16 +86,26 @@ console.log(domains);
 ```
 
 ### Generate Vanity URL
+
 The `generateVanity` call converts a URL (to a product page, listing page, etc.) to a wild.link URL with embedded tracking for the authenticated device.
+
 ```js
-const vanity = await WLClient.generateVanity('https://www.target.com');
-console.log(vanity);
+WLClient.generateVanity('https://www.walmart.com').then((vanity) => {
+  console.log(vanity);
+});
 ```
 
 #### Example Return
+
 ```js
 {
-  OriginalURL: "https://www.target.com",
-  ShortURL: "http://wild.link/target/AK2vBQ"
+  OriginalURL: "https://www.walmart.com",
+  ShortURL: "http://wild.link/walmart/AK2vBQ"
 }
 ```
+
+## Examples
+
+Check out examples for implementation details.
+
+[Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)

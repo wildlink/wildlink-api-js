@@ -13,6 +13,10 @@
     "parcel-bundler": "^1.11.0",
     "parse-domain": "^2.1.7",
     "webextension-polyfill": "^0.4.0",
-    "wildlink-api-js": "https://github.com/wildlink/wildlink-api-js"
+    "whatwg-fetch": "^3.0.0",
+    "wildlink-js-client": "https://github.com/wildlink/wildlink-js-client"
+  },
+  "devDependencies": {
+    "prettier": "^1.16.4"
   }
 }
