@@ -1,4 +1,4 @@
-import asyncWLClient from './WildlinkClient';
+import WildlinkClient from './WildlinkClient';
 import {
   getMerchantDomains,
   getDomain,
@@ -7,7 +7,13 @@ import {
 } from './helpers';
 
 export default class ClipboardMonitor {
-  constructor() {
+  /**
+   * @param {number} interval - Interval in ms to check the clipboard.
+   * @param {boolean} silent - Whether or not the clipboard should be automatically replaced.
+   */
+  constructor(interval, silent = false) {
+    this.interval = interval;
+    this.silent = silent;
     // create textarea elements used to monitor and modify the clipboard
     this.pasteArea = document.createElement('textarea');
     this.copyArea = document.createElement('textarea');
@@ -18,7 +24,7 @@ export default class ClipboardMonitor {
   }
 
   async watch() {
-    const WLClient = await asyncWLClient;
+    const WLClient = await WildlinkClient();
     // append the textarea elements so we can interact with them
     document.body.appendChild(this.testArea);
     document.body.appendChild(this.pasteArea);
@@ -37,27 +43,33 @@ export default class ClipboardMonitor {
       document.execCommand('paste');
       const newTestClipboard = this.testArea.value;
       // starts with http and clipboard has changed
-      if (startsWithHttp(newTestClipboard) && oldTestClipboard !== newTestClipboard) {
+      if (
+        startsWithHttp(newTestClipboard) &&
+        oldTestClipboard !== newTestClipboard
+      ) {
         // get domain with and without subdomain
         const [domain, withSubdomain] = getDomain(newTestClipboard);
         const merchantDomains = await getMerchantDomains();
         // our list of supported merchant domains sometimes includes the subdomain
-        const supportedDomain = merchantDomains[domain] || merchantDomains[withSubdomain];
+        const supportedDomain =
+          merchantDomains[domain] || merchantDomains[withSubdomain];
         if (supportedDomain) {
           this.pasteArea.focus();
           this.pasteArea.value = '';
           document.execCommand('paste');
           const fullClipboard = this.pasteArea.value;
           const { VanityURL } = await WLClient.generateVanity(fullClipboard);
-          this.copyArea.value = VanityURL;
-          this.copyArea.select();
-          document.execCommand('copy');
-          this.copyArea.value = '';
-          // notify the user we have modified their clipboard
-          wildlinkCopiedNotification(VanityURL);
+          if (!this.silent) {
+            this.copyArea.value = VanityURL;
+            this.copyArea.select();
+            document.execCommand('copy');
+            this.copyArea.value = '';
+            // notify the user we have modified their clipboard
+            wildlinkCopiedNotification(VanityURL);
+          }
         }
       }
-    }, 600);
+    }, this.interval);
   }
 
   stop() {

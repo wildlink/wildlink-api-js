@@ -3,6 +3,6 @@ import 'babel-polyfill';
 
 import ClipboardMonitor from './ClipboardMonitor';
 
-const clipboardMonitor = new ClipboardMonitor();
+const clipboardMonitor = new ClipboardMonitor(600);
 
 clipboardMonitor.watch();

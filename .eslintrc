@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb-base/legacy",
+  "extends": ["airbnb-base/legacy", "prettier"],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "module"
@@ -10,10 +10,6 @@
     "es6": true
   },
   "rules": {
-    "comma-dangle": [2, "only-multiline"],
-    "func-names": "off",
-    "indent": ["error", 2, { "MemberExpression": "off"}],
-    "arrow-parens": ["error", "as-needed"],
-    "semi": ["error", "always"]
+    "func-names": "off"
   }
 }
