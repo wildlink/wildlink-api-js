@@ -100,7 +100,7 @@ WLClient.generateVanity('https://www.walmart.com').then((vanity) => {
 ```js
 {
   OriginalURL: "https://www.walmart.com",
-  ShortURL: "http://wild.link/walmart/AK2vBQ"
+  VanityURL: "http://wild.link/walmart/AK2vBQ"
 }
 ```
 
