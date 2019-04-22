@@ -6,14 +6,19 @@
   "repository": "https://github.com/wildlink/wildlink-js-client.git",
   "author": "Vincent Pham <vincentvpham@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test": "mocha */**.test.js"
+  },
   "dependencies": {
-    "whatwg-fetch": "^3.0.0"
+    "whatwg-fetch": "2.0.4"
   },
   "devDependencies": {
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.16.0",
+    "expect": "^24.7.1",
+    "mocha": "^6.1.4",
     "prettier": "^1.16.4"
   }
 }

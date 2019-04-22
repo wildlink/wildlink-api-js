@@ -79,8 +79,9 @@ WildlinkClient.prototype.generateVanity = function(url) {
   }
   const body = {
     URL: url,
+    Placement: 'js-client',
   };
-  return request('/v1/vanity', {
+  return request('/v2/vanity', {
     method: 'POST',
     headers: this.makeHeaders(),
     body: JSON.stringify(body),
