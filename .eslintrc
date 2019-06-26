@@ -1,5 +1,10 @@
 {
-  "extends": ["airbnb-base/legacy", "prettier"],
+  "extends": [
+    "airbnb-base/legacy",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "module"

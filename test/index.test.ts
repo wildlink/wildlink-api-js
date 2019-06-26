@@ -1,7 +1,8 @@
 /* global describe it */
-const expect = require('expect');
+import 'mocha';
+import expect from 'expect';
 
-const WildlinkClient = require('./WildlinkClient.js');
+import { WildlinkClient } from '../src';
 
 describe('WildlinkClient', () => {
   const WLClient = new WildlinkClient('SECRET');

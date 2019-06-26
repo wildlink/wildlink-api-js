@@ -11,7 +11,7 @@ export default class ClipboardMonitor {
    * @param {number} interval - Interval in ms to check the clipboard.
    * @param {boolean} silent - Whether or not the clipboard should be automatically replaced.
    */
-  constructor(interval, silent = false) {
+  constructor(interval = 600, silent = false) {
     this.interval = interval;
     this.silent = silent;
     // create textarea elements used to monitor and modify the clipboard
@@ -31,7 +31,7 @@ export default class ClipboardMonitor {
     document.body.appendChild(this.copyArea);
 
     // save the interval ID so we can cancel if needed
-    // every 600 ms we will run this function
+    // every 600 ms (default) we will run this function
     this.monitorIntervalId = setInterval(async () => {
       // watch the clipboard by:
       // 1. storing the old value
@@ -58,6 +58,10 @@ export default class ClipboardMonitor {
           this.pasteArea.value = '';
           document.execCommand('paste');
           const fullClipboard = this.pasteArea.value;
+          console.group('supported domain copied:');
+          console.log('request to generate vanity with URL:');
+          console.log(fullClipboard);
+          console.groupEnd();
           const { VanityURL } = await WLClient.generateVanity(fullClipboard);
           if (!this.silent) {
             this.copyArea.value = VanityURL;

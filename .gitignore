@@ -6,4 +6,7 @@ build
 .cache
 
 #logs
-yarn-error.log
+*.log
+
+#build
+/lib

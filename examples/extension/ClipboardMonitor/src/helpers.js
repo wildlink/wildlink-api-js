@@ -16,7 +16,7 @@ export const getMerchantDomains = async () => {
     try {
       const merchantDomains = await WLClient.getDomains();
       const domains = {};
-      // create a map of merchant domains for quicker lookup
+      // create a map of merchant domains for "quicker" lookup
       merchantDomains.forEach((merchant) => {
         domains[merchant.Value] = merchant.ID;
       });
