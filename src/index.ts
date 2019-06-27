@@ -1,7 +1,6 @@
 import promise from 'es6-promise';
 
 import request from './helpers/request';
-import { version } from '../package.json';
 import { ApiHeaders, Device, Domain, Vanity } from './types/api';
 
 promise.polyfill();
@@ -22,7 +21,7 @@ export class WildlinkClient {
   private makeHeaders(): ApiHeaders {
     const headers = {
       'Content-Type': 'application/json',
-      'WF-User-Agent': `js-client-v${version}`,
+      'WF-User-Agent': `js-client`,
       'WF-Secret': this.secret,
       'WF-Device-Token': this.deviceToken,
     };
