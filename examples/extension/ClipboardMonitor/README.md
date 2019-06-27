@@ -2,7 +2,7 @@
 
 This is an example of a browser extension used monitor the clipboard and replace any supported product and brand links into affiliate versions to generate revenue. Learn more at https://wildlink.me.
 
-Use this as a guideline for utilizing the Wildlink JavaScript API and implementing a clipboard monitor in a browser extension context.
+Use this as a guideline for utilizing the Wildlink JavaScript Client Library and implementing a clipboard monitor in a browser extension context.
 
 `src/background.js` is the entry point to the core functionality of this example.
 
@@ -10,32 +10,30 @@ Use this as a guideline for utilizing the Wildlink JavaScript API and implementi
 
 1. Install dependencies:
 
-    ```yarn install```
+   `yarn install`
 
+1) Build `src/background.js`:
 
-1. Build `src/background.js`:
+   `yarn build`
 
-    ```yarn build```
+   Parcel will build `background.js` once.
 
-    Parcel will build `background.js` once.
+   _or_
 
-    _or_
+   `yarn start`
 
-    ```yarn start```
+   Parcel will watch `background.js` and dependent files for any changes and will automatically rebuild.
 
-    Parcel will watch `background.js` and dependent files for any changes and will automatically rebuild.
+   _The extension should have been built at least once and the directory `/src/build/` should exist_
 
-    _The extension should have been built at least once and the directory `/src/build/` should exist_
+1) Open Chrome, navigate to [chrome://extensions](chrome://extensions), and enable **Developer mode**
 
-1. Open Chrome, navigate to [chrome://extensions](chrome://extensions), and enable __Developer mode__
+   ![installing a development 0chrome extension](https://developer.chrome.com/static/images/get_started/load_extension.png)
 
-    ![installing a development 0chrome extension](https://developer.chrome.com/static/images/get_started/load_extension.png)
-
-1. Click __Load unpacked__ and select the `ClipboardMonitor` directory
-1. __Wildlink Clipboard Monitor Example__ should now be installed
-1. For debugging, you can view the background page console by clicking __Inspect views background page__
-1. Reload the extension by clicking the :arrows_counterclockwise: icon
-
+1) Click **Load unpacked** and select the `ClipboardMonitor` directory
+1) **Wildlink Clipboard Monitor Example** should now be installed
+1) For debugging, you can view the background page console by clicking **Inspect views background page**
+1) Reload the extension by clicking the :arrows_counterclockwise: icon
 
 ## The Browser Extension
 

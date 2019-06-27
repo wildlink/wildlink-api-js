@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 
-import WildlinkClient from 'wildlink-js-client';
+import { WildlinkClient } from 'wildlink-js-client';
 
 // wildlink secret token
 const SECRET = '';
@@ -12,6 +12,7 @@ export default async () => {
   if (!WLClient) {
     try {
       WLClient = new WildlinkClient(SECRET);
+
       // check for stored device info
       let {
         deviceId,
@@ -22,13 +23,41 @@ export default async () => {
         'deviceKey',
         'deviceToken',
       ]);
-      // device exists
-      if (deviceKey || deviceToken) {
-        WLClient.init({
+
+      if (deviceKey) {
+        // deviceKey exists; recreate device
+        await WLClient.init({
           deviceKey,
-          deviceToken,
         });
-        console.group('device reinitialized:');
+        deviceId = WLClient.getDeviceId();
+        deviceKey = WLClient.getDeviceKey();
+        deviceToken = WLClient.getDeviceToken();
+        // save device to local storage to reinitialize
+        await browser.storage.local.set({
+          deviceId,
+          deviceToken,
+          deviceKey,
+        });
+        console.group('device reinitialized with deviceKey (api request):');
+        console.log(`deviceId:    ${deviceId}`);
+        console.log(`deviceKey:   ${deviceKey}`);
+        console.log(`deviceToken: ${deviceToken}`);
+        console.groupEnd();
+      } else if (deviceToken) {
+        // deviceToken exists; reuse device
+        WLClient.init({ deviceToken });
+        deviceId = WLClient.getDeviceId();
+        deviceKey = WLClient.getDeviceKey();
+        deviceToken = WLClient.getDeviceToken();
+        // save device to local storage to reinitialize
+        await browser.storage.local.set({
+          deviceId,
+          deviceToken,
+          deviceKey,
+        });
+        console.group(
+          'device reinitialized with deviceToken (no api request):',
+        );
         console.log(`deviceId:    ${deviceId}`);
         console.log(`deviceKey:   ${deviceKey}`);
         console.log(`deviceToken: ${deviceToken}`);

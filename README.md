@@ -1,12 +1,12 @@
 # wildlink-js-client
 
-JavaScript client library for working with Wildfire/Wildlink APIs. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
+JavaScript Client Library for working with Wildfire/Wildlink APIs both server and client side. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
 
 ## Installation
 
 With Yarn:
 
-`yarn add https://github.com/wildlink/wildlink-js-client`
+`yarn add wildlink-js-client`
 
 ## Usage
 
@@ -14,7 +14,7 @@ With Yarn:
 
 ```js
 // 1. Load
-const WildlinkClient = require('wildlink-js-client');
+const { WildlinkClient } = require('wildlink-js-client');
 
 // 2. Create instance of WildlinkClient
 const WLClient = new WildlinkClient('SECRET');
@@ -35,11 +35,11 @@ WLClient.init({
 });
 ```
 
-Note: To obtain a `SECRET` contact support@wildlink.me
+To obtain a `SECRET` contact support@wildlink.me.
 
 ### Get Supported Merchant Domains
 
-The `getDomains` call fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call.
+The `getDomains` function fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call.
 
 ```js
 WLClient.getDomains().then((domains) => {
@@ -87,7 +87,7 @@ WLClient.getDomains().then((domains) => {
 
 ### Generate Vanity URL
 
-The `generateVanity` call converts a URL (to a product page, listing page, etc.) to a wild.link URL with embedded tracking for the authenticated device.
+The `generateVanity` function converts a URL (to a product page, listing page, etc.) to a wild.link URL with embedded tracking for the authenticated device.
 
 ```js
 WLClient.generateVanity('https://www.walmart.com').then((vanity) => {
