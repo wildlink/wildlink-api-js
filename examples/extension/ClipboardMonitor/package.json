@@ -13,7 +13,7 @@
     "parcel-bundler": "^1.11.0",
     "parse-domain": "^2.1.7",
     "webextension-polyfill": "^0.4.0",
-    "wildlink-js-client": "wildlink-js-client"
+    "wildlink-js-client": "^1.0.2"
   },
   "devDependencies": {
     "prettier": "^1.16.4"
