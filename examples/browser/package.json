@@ -1,0 +1,13 @@
+{
+  "name": "wildlink-browser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "./node_modules/.bin/browserify index.js > bundle.js"
+  },
+  "dependencies": {
+    "browserify": "^16.2.3",
+    "wildlink-js-client": "^1.0.2"
+  }
+}
