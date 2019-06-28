@@ -2,15 +2,21 @@
 
 JavaScript Client Library for working with Wildfire/Wildlink APIs both server and client side. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
 
+## Requirements
+
+- Node.js
+- package manager (npm or yarn)
+- ability to consume packages in the browser (build tool)
+
 ## Installation
 
 With Yarn:
 
-`yarn add wildlink-js-client`
+```
+yarn add wildlink-js-client
+```
 
 ## Usage
-
-### Instantiation
 
 ```js
 // 1. Load
@@ -22,8 +28,10 @@ const WLClient = new WildlinkClient('SECRET');
 // 3. Initialize
 WLClient.init({
   // deviceKey and deviceToken are both optional and a new device will be created if both are omitted
-  deviceKey: 'DEVICE_KEY', // Create a new "session" with a previously created device
-  deviceToken: 'DEVICE_TOKEN', // Use a previously stored device
+  // Create a new "session" with a previously created device
+  // deviceKey: 'DEVICE_KEY',
+  // Use a previously stored device
+  // deviceToken: 'DEVICE_TOKEN',
 }).then(() => {
   // deviceId is used for referencing the device in reporting data
   const deviceId = WLClient.getDeviceId();
@@ -35,7 +43,7 @@ WLClient.init({
 });
 ```
 
-To obtain a `SECRET` contact support@wildlink.me.
+To obtain a `SECRET`, contact support@wildlink.me.
 
 ### Get Supported Merchant Domains
 
@@ -109,3 +117,7 @@ WLClient.generateVanity('https://www.walmart.com').then((vanity) => {
 Check out examples for implementation details.
 
 [Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)
+
+[Node.js](https://github.com/wildlink/wildlink-js-client/tree/master/examples/nodejs)
+
+[Browser](https://github.com/wildlink/wildlink-js-client/tree/master/examples/browser)

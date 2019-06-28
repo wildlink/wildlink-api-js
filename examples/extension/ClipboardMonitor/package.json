@@ -5,8 +5,8 @@
   "main": "background.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel watch src/background.js -d src/build",
-    "build": "parcel build src/background.js -d src/build"
+    "start": "./node_modules/.bin/parcel watch src/background.js -d src/build",
+    "build": "./node_modules/.bin/parcel build src/background.js -d src/build"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
