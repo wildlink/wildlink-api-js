@@ -1,15 +1,29 @@
-export interface ParsedResponse<T> {
-  status: number;
-  ok: boolean;
-  json: T;
-  error?: string;
+export interface ActiveDomain {
+  ID: number;
+  Domain: string;
+  Merchant: Merchant;
 }
 
-export interface Domain {
-  ID: string;
-  Kind: string;
-  Value: string;
-  URL: string;
+const PERCENTAGE = 'PERCENTAGE';
+const FLAT = 'FLAT';
+
+type RateKindMap = {
+  [PERCENTAGE]: undefined;
+  [FLAT]: string;
+};
+
+export interface Merchant {
+  ID: number;
+  Name: string;
+  DefaultRate: Rate<typeof PERCENTAGE> | Rate<typeof FLAT> | null;
+  DerivedRate: Rate<typeof PERCENTAGE> | Rate<typeof FLAT> | null;
+  MaxRate: Rate<typeof PERCENTAGE> | Rate<typeof FLAT> | null;
+}
+
+export interface Rate<K extends keyof RateKindMap> {
+  Kind: K;
+  Amount: string;
+  Currency: RateKindMap[K];
 }
 
 export interface Vanity {
@@ -21,9 +35,14 @@ export interface Device {
   DeviceToken: string;
   DeviceKey: string;
   DeviceID: number;
-  UUID: string;
 }
 
 export interface ApiHeaders {
   [key: string]: string;
+}
+
+export interface UrlBaseConfig {
+  api?: string;
+  data?: string;
+  vanity?: string;
 }

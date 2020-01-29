@@ -1,12 +1,11 @@
-# wildlink-js-client
+# wildlink-js-client (v2)
 
-JavaScript Client Library for working with Wildfire/Wildlink APIs both server and client side. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
+JavaScript Client Library for working with Wildfire/Wildlink APIs client side. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
 
 ## Requirements
 
-- Node.js
-- package manager (npm or yarn)
-- ability to consume packages in the browser (build tool)
+- package manager: npm or yarn
+- build tool: Parcel, Webpack, etc
 
 ## Installation
 
@@ -23,31 +22,35 @@ yarn add wildlink-js-client
 const { WildlinkClient } = require('wildlink-js-client');
 
 // 2. Create instance of WildlinkClient
-const WLClient = new WildlinkClient('SECRET');
+const WLClient = new WildlinkClient(SECRET, APP_ID);
+
+// device is optional and a new device will be created if it is omitted
+const device = {
+  DeviceID: DEVICE_ID,
+  DeviceToken: DEVICE_TOKEN,
+  DeviceKey: DEVICE_KEY,
+}
 
 // 3. Initialize
-WLClient.init({
-  // deviceKey and deviceToken are both optional and a new device will be created if both are omitted
-  // Create a new "session" with a previously created device
-  // deviceKey: 'DEVICE_KEY',
-  // Use a previously stored device
-  // deviceToken: 'DEVICE_TOKEN',
-}).then(() => {
+WLClient.init(device).then(() => {
+  // device should be persisted after creation for client reinitialization
+  const newDevice = WLClient.getDevice();
+  const {
+    DeviceID,
+    DeviceToken,
+    DeviceKey,
+  } = newDevice;
   // deviceId is used for referencing the device in reporting data
   const deviceId = WLClient.getDeviceId();
-  // deviceKey is used for authenticating the device in the future - it doesn't expire
-  const deviceKey = WLClient.getDeviceKey();
-  // deviceToken is used for authenticating the device - it expires
-  const deviceToken = WLClient.getDeviceToken();
   // 4. Make API requests (see below)
 });
 ```
 
-To obtain a `SECRET`, contact support@wildlink.me.
+To obtain a `SECRET` and `APP_ID`, please contact support@wildlink.me for more information.
 
 ### Get Supported Merchant Domains
 
-The `getDomains` function fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call.
+The `getDomains` function fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call. We can let the browser handle the caching for this call since the domains are served off a CDN.
 
 ```js
 WLClient.getDomains().then((domains) => {
@@ -60,34 +63,43 @@ WLClient.getDomains().then((domains) => {
 ```js
 [
   {
-    ID: "8NkEhsh5FA",
-    Kind: "domain",
-    Value: "theblackbow.com",
-    URL: "http://wild.link/8NkEhsh5FA"
+    ID: 1991737,
+    Domain: "target.com",
+    Merchant: {
+      ID: 5482877,
+      Name: "Target",
+      DefaultRate: {
+        Kind: "PERCENTAGE",
+        Amount: "0.5",
+      },
+      DerivedRate: {
+        Kind: "PERCENTAGE",
+        Amount: "0.75",
+      }
+      MaxRate: {
+        Kind: "PERCENTAGE",
+        Amount: "0.5",
+      }
+    }
   },
   {
-    ID: "8NkE1tKFAQ8",
-    Kind: "domain",
-    Value: "acetag.com",
-    URL: "http://wild.link/8NkE1tKFAQ8"
-  },
-  {
-    ID: "8NkE5byZAQM",
-    Kind: "domain",
-    Value: "www.adagio.com",
-    URL: "http://wild.link/8NkE5byZAQM"
-  },
-  {
-    ID: "8NkE3tKFAQ4",
-    Kind: "domain",
-    Value: "awesomeseating.com",
-    URL: "http://wild.link/8NkE3tKFAQ4"
-  },
-  {
-    ID: "8NkE8NCFAQo",
-    Kind: "domain",
-    Value: "theblackbox.com",
-    URL: "http://wild.link/8NkE8NCFAQo"
+    ID: 5834,
+    Domain: "verizon.com",
+    Merchant: {
+      ID: 7000,
+      Name: "Verizon Business Markets",
+      DefaultRate: {
+        Kind: "FLAT",
+        Amount: "15",
+        Currency: "USD",
+      },
+      DerivedRate: null,
+      MaxRate: {
+        Kind: "FLAT",
+        Amount: "15",
+        Currency: "USD",
+      },
+    }
   },
   ...
 ]
@@ -95,10 +107,32 @@ WLClient.getDomains().then((domains) => {
 
 ### Generate Vanity URL
 
-The `generateVanity` function converts a URL (to a product page, listing page, etc.) to a wild.link URL with embedded tracking for the authenticated device.
+The `generateVanity` function converts a URL (to a product, listing, etc. on a supported domain) to a `wild.link` URL with embedded tracking for the given device.
 
 ```js
-WLClient.generateVanity('https://www.walmart.com').then((vanity) => {
+// entry from getDomains() that matches the domain to be converted
+const domain =   {
+  ID: 1991737,
+  Domain: "target.com",
+  Merchant: {
+    ID: 5482877,
+    Name: "Target",
+    DefaultRate: {
+      Kind: "PERCENTAGE",
+      Amount: "0.5",
+    },
+    DerivedRate: {
+      Kind: "PERCENTAGE",
+      Amount: "0.75",
+    }
+    MaxRate: {
+      Kind: "PERCENTAGE",
+      Amount: "0.5",
+    }
+  }
+};
+
+WLClient.generateVanity('https://www.target.com', domain).then((vanity) => {
   console.log(vanity);
 });
 ```
@@ -107,8 +141,48 @@ WLClient.generateVanity('https://www.walmart.com').then((vanity) => {
 
 ```js
 {
-  OriginalURL: "https://www.walmart.com",
-  VanityURL: "http://wild.link/walmart/AK2vBQ"
+  OriginalURL: "https://target.com",
+  VanityURL: "https://wild.link/target/AP_sBQ"
+}
+```
+
+## Error Handling
+
+Error/Rejection reasons are in the following format and include application or network level errors:
+
+| Name        | Type                         | Description
+| -           | -                            | -
+| status      | `number` \| `undefined`      | HTTP status
+| body        | `string`                     | The raw response string
+| result      | `*`                          | The JSON-parsed result. `false` if not parse-able.
+
+### Promises
+
+```js
+const APP_ID = 0;
+const WLClient = new WildlinkClient(SECRET, APP_ID);
+
+WLClient.init().then(() => {
+  WLClient.generateVanity('https://www.target.com', domain)
+    .then((vanity) => {
+      // no vanity generated
+    })
+    .catch((reason) => {
+      // "Missing application ID"
+      console.log(reason.body);
+    });
+});
+```
+
+### Async/Await and Try/Catch
+
+```js
+// WLClient initialized correctly
+try {
+  const vanity = await WLClient.generateVanity('https://www.target.com');
+} catch (error) {
+  // "No ActiveDomain provided"
+  console.log(error.body);
 }
 ```
 
@@ -118,6 +192,7 @@ Check out examples for implementation details.
 
 [Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)
 
-[Node.js](https://github.com/wildlink/wildlink-js-client/tree/master/examples/nodejs)
 
-[Browser](https://github.com/wildlink/wildlink-js-client/tree/master/examples/browser)
+## Documentation
+
+[v1 Docs](https://github.com/wildlink/wildlink-js-client/tree/master/docs/v1)

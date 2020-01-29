@@ -1,32 +1,36 @@
 import fetch from 'isomorphic-fetch';
 
-import { API_URL_BASE } from './constants';
-import { ParsedResponse } from '../types/api';
+import { Response as WLResponse } from '../types/response';
 
-const parse = async <T>(response: Response): Promise<ParsedResponse<T>> => {
-  const json = await response.json();
-  const parsedResponse: ParsedResponse<T> = {
-    status: response.status,
-    ok: response.ok,
-    json,
-  };
-  if (!response.ok) {
-    parsedResponse.error = json.ErrorMessage || response.statusText;
+const parse = async <T>(response: Response): Promise<WLResponse<T>> => {
+  let result;
+  const body = await response.text();
+
+  try {
+    result = JSON.parse(body);
+  } catch (error) {
+    result = false;
   }
+
+  const parsedResponse: WLResponse<T> = {
+    status: response.status,
+    result,
+    body,
+  };
+
+  if (!response.ok) {
+    return Promise.reject(parsedResponse);
+  }
+
   return parsedResponse;
 };
 
-const request = async <T>(path: string, options: RequestInit): Promise<T> => {
-  try {
-    const response = await fetch(`${API_URL_BASE}${path}`, options);
-    const parsedResponse = await parse<T>(response);
-    if (!parsedResponse.ok) {
-      throw new Error(parsedResponse.error);
-    }
-    return parsedResponse.json;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+const request = async <T>(
+  url: string,
+  options: RequestInit,
+): Promise<WLResponse<T>> => {
+  const response = await fetch(url, options);
+  return await parse<T>(response);
 };
 
 export default request;
