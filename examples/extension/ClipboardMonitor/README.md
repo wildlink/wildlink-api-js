@@ -28,7 +28,7 @@ Use this as a guideline for utilizing the Wildlink JavaScript Client Library and
 
 1) Open Chrome, navigate to [chrome://extensions](chrome://extensions), and enable **Developer mode**
 
-   ![installing a development 0chrome extension](https://developer.chrome.com/static/images/get_started/load_extension.png)
+   ![installing a development chrome extension](https://developer.chrome.com/static/images/get_started/load_extension.png)
 
 1) Click **Load unpacked** and select the `ClipboardMonitor` directory
 1) **Wildlink Clipboard Monitor Example** should now be installed

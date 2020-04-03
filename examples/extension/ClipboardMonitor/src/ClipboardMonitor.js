@@ -1,9 +1,7 @@
-import WildlinkClient from './WildlinkClient';
 import {
-  getMerchantDomains,
-  getDomain,
   startsWithHttp,
   wildlinkCopiedNotification,
+  getSupportedDomain,
 } from './helpers';
 
 export default class ClipboardMonitor {
@@ -11,7 +9,8 @@ export default class ClipboardMonitor {
    * @param {number} interval - Interval in ms to check the clipboard.
    * @param {boolean} silent - Whether or not the clipboard should be automatically replaced.
    */
-  constructor(interval = 600, silent = false) {
+  constructor(wildlinkClient, interval = 600, silent = false) {
+    this.wildlinkClient = wildlinkClient;
     this.interval = interval;
     this.silent = silent;
     // create textarea elements used to monitor and modify the clipboard
@@ -24,7 +23,8 @@ export default class ClipboardMonitor {
   }
 
   async watch() {
-    const WLClient = await WildlinkClient();
+    console.log('starting clipboard monitor...');
+
     // append the textarea elements so we can interact with them
     document.body.appendChild(this.testArea);
     document.body.appendChild(this.pasteArea);
@@ -42,35 +42,44 @@ export default class ClipboardMonitor {
       this.testArea.focus();
       document.execCommand('paste');
       const newTestClipboard = this.testArea.value;
-      // starts with http and clipboard has changed
+      // starts with http, clipboard has changed, and not a vanity
       if (
         startsWithHttp(newTestClipboard) &&
-        oldTestClipboard !== newTestClipboard
+        oldTestClipboard !== newTestClipboard &&
+        // specific to the application's vanity link
+        newTestClipboard.indexOf('wild.link') < 0
       ) {
-        // get domain with and without subdomain
-        const [domain, withSubdomain] = getDomain(newTestClipboard);
-        const merchantDomains = await getMerchantDomains();
-        // our list of supported merchant domains sometimes includes the subdomain
-        const supportedDomain =
-          merchantDomains[domain] || merchantDomains[withSubdomain];
-        if (supportedDomain) {
-          this.pasteArea.focus();
-          this.pasteArea.value = '';
-          document.execCommand('paste');
-          const fullClipboard = this.pasteArea.value;
-          console.group('supported domain copied:');
-          console.log('request to generate vanity with URL:');
-          console.log(fullClipboard);
-          console.groupEnd();
-          const { VanityURL } = await WLClient.generateVanity(fullClipboard);
-          if (!this.silent) {
-            this.copyArea.value = VanityURL;
-            this.copyArea.select();
-            document.execCommand('copy');
-            this.copyArea.value = '';
-            // notify the user we have modified their clipboard
-            wildlinkCopiedNotification(VanityURL);
+        try {
+          // let the browser handle caching
+          const merchantDomains = await this.wildlinkClient.getDomains();
+          const supportedDomain = getSupportedDomain(
+            merchantDomains,
+            newTestClipboard,
+          );
+          if (supportedDomain) {
+            this.pasteArea.focus();
+            this.pasteArea.value = '';
+            document.execCommand('paste');
+            const fullClipboard = this.pasteArea.value;
+            console.group('supported domain copied:');
+            console.log('request to generate vanity with URL:');
+            console.log(fullClipboard);
+            console.groupEnd();
+            const { VanityURL } = await this.wildlinkClient.generateVanity(
+              fullClipboard,
+              supportedDomain,
+            );
+            if (!this.silent) {
+              this.copyArea.value = VanityURL;
+              this.copyArea.select();
+              document.execCommand('copy');
+              this.copyArea.value = '';
+              // notify the user we have modified their clipboard
+              wildlinkCopiedNotification(VanityURL);
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
       }
     }, this.interval);
@@ -81,5 +90,7 @@ export default class ClipboardMonitor {
     document.body.removeChild(this.testArea);
     document.body.removeChild(this.pasteArea);
     document.body.removeChild(this.copyArea);
+
+    console.log('clipboard monitor stopped');
   }
 }

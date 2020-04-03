@@ -1,37 +1,7 @@
 import browser from 'webextension-polyfill';
 import parseDomain from 'parse-domain';
 
-import WildlinkClient from './WildlinkClient';
-
 import icon from './icon.png';
-
-export const getMerchantDomains = async () => {
-  const WLClient = await WildlinkClient();
-  const { domainsLastFetched } = await browser.storage.local.get([
-    'domainsLastFetched',
-  ]);
-  const msSinceLastFetch = Date.now() - domainsLastFetched;
-  // store and refresh the domain list every 24 hours
-  if (!domainsLastFetched || msSinceLastFetch > 1000 * 60 * 60 * 24) {
-    try {
-      const merchantDomains = await WLClient.getDomains();
-      const domains = {};
-      // create a map of merchant domains for "quicker" lookup
-      merchantDomains.forEach((merchant) => {
-        domains[merchant.Value] = merchant.ID;
-      });
-      await browser.storage.local.set({
-        domains,
-        domainsLastFetched: Date.now(),
-      });
-      console.log('domains set');
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  const { domains } = await browser.storage.local.get(['domains']);
-  return domains;
-};
 
 /**
  * @param {string} url - URL to extract domain and domain with subdomain from.
@@ -41,10 +11,13 @@ export const getDomain = (url) => {
   // returns null if unknown tld or invalid url
   if (parsedUrl !== null) {
     const domain = `${parsedUrl.domain}.${parsedUrl.tld}`;
-    const withSubdomain = `${parsedUrl.subdomain}.${domain}`;
+    const domains = [domain];
     // some of our merchant domains include the subdomain
     // so we have to check that as well
-    return [domain, withSubdomain];
+    if (parsedUrl.subdomain) {
+      domains.push(`${parsedUrl.subdomain}.${domain}`);
+    }
+    return domains;
   }
   return [];
 };
@@ -69,4 +42,20 @@ export const wildlinkCopiedNotification = (wildlink) => {
     message: 'Paste anywhere to share and earn',
   };
   browser.notifications.create(wildlink, notificationOptions);
+};
+
+/**
+ * @param {ActiveDomain[]} supportedDomains - Domains from WildlinkClient.getDomains()
+ * @param {string} testDomain - Domain to check for support
+ */
+export const getSupportedDomain = (supportedDomains, testDomain) => {
+  const testDomains = getDomain(testDomain);
+  for (let j = 0; j < testDomains.length; j++) {
+    for (let i = 0; i < supportedDomains.length; i++) {
+      if (supportedDomains[i].Domain === testDomains[j]) {
+        return supportedDomains[i];
+      }
+    }
+  }
+  return false;
 };

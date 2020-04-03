@@ -1,76 +1,97 @@
-import promise from 'es6-promise';
-
 import request from './helpers/request';
-import { ApiHeaders, Device, Domain, Vanity } from './types/api';
-
-promise.polyfill();
+import { ApplicationErrorResponse } from './helpers/error';
+import {
+  ApiHeaders,
+  Device,
+  ActiveDomain,
+  Vanity,
+  UrlBaseConfig,
+} from './types/api';
+import {
+  API_URL_BASE,
+  DATA_URL_BASE,
+  VANITY_URL_BASE,
+} from './helpers/constants';
 
 export class WildlinkClient {
+  private applicationId: number;
   private secret: string;
-
   private isInit: boolean;
-
   private deviceToken: string;
-
   private deviceKey: string;
-
   private deviceId: number;
-
-  private deviceUuid: string;
+  private apiUrlBase: string;
+  private dataUrlBase: string;
+  private vanityUrlBase: string;
 
   private makeHeaders(): ApiHeaders {
     const headers = {
       'Content-Type': 'application/json',
-      'WF-User-Agent': `js-client`,
+      'WF-User-Agent': 'js-client',
       'WF-Secret': this.secret,
       'WF-Device-Token': this.deviceToken,
+      'WF-App-ID': String(this.applicationId),
     };
     return headers;
   }
 
-  private async createDevice(): Promise<void> {
-    // create or recreate device depending if deviceKey provided
-    const body = {
-      DeviceKey: this.deviceKey,
-    };
-    const device = await request<Device>('/v2/device', {
-      method: 'POST',
-      headers: this.makeHeaders(),
-      body: JSON.stringify(body),
-    });
-    this.deviceToken = device.DeviceToken;
-    this.deviceKey = device.DeviceKey;
-    this.deviceId = device.DeviceID;
-    this.deviceUuid = device.UUID;
-  }
-
-  public constructor(secret: string) {
+  public constructor(
+    secret: string,
+    applicationId: number,
+    {
+      api = API_URL_BASE,
+      data = DATA_URL_BASE,
+      vanity = VANITY_URL_BASE,
+    }: UrlBaseConfig = {
+      api: API_URL_BASE,
+      data: DATA_URL_BASE,
+      vanity: VANITY_URL_BASE,
+    },
+  ) {
     if (!secret) {
-      throw new Error('Missing secret');
+      throw ApplicationErrorResponse('Missing secret');
     }
+    if (!applicationId) {
+      throw ApplicationErrorResponse('Missing application ID');
+    }
+    this.applicationId = applicationId;
     this.secret = secret;
     this.isInit = false;
     this.deviceToken = '';
     this.deviceKey = '';
     this.deviceId = 0;
-    this.deviceUuid = '';
+    this.apiUrlBase = api;
+    this.dataUrlBase = data;
+    this.vanityUrlBase = vanity;
   }
 
-  public async init({ deviceToken = '', deviceKey = '' } = {}): Promise<void> {
+  public async init(
+    { DeviceID = 0, DeviceToken = '', DeviceKey = '' }: Device = {
+      DeviceID: 0,
+      DeviceToken: '',
+      DeviceKey: '',
+    },
+  ): Promise<void> {
     if (this.isInit) {
-      throw new Error('WildlinkClient should only be initialized once');
+      return Promise.reject(
+        ApplicationErrorResponse(
+          'WildlinkClient should only be initialized once',
+        ),
+      );
     }
-    this.isInit = true;
-    this.deviceToken = deviceToken;
-    this.deviceKey = deviceKey;
+    this.deviceId = DeviceID;
+    this.deviceToken = DeviceToken;
+    this.deviceKey = DeviceKey;
 
-    if (deviceToken === '') {
+    if (DeviceToken === '') {
       try {
         await this.createDevice();
       } catch (error) {
         throw error;
       }
     }
+
+    this.isInit = true;
   }
 
   public getDeviceToken(): string {
@@ -85,37 +106,122 @@ export class WildlinkClient {
     return this.deviceId;
   }
 
-  public getDeviceUuid(): string {
-    return this.deviceUuid;
+  public getDevice(): Device {
+    if (!this.init) {
+      throw ApplicationErrorResponse(
+        'WildlinkClient has not been initialized yet',
+      );
+    }
+
+    return {
+      DeviceID: this.getDeviceId(),
+      DeviceToken: this.getDeviceToken(),
+      DeviceKey: this.getDeviceKey(),
+    };
   }
 
-  public getDomains(): Promise<Domain[]> {
-    if (!this.isInit) {
-      throw new Error('WildlinkClient has not been initialized yet');
+  private async createDevice(): Promise<void> {
+    // create or recreate device depending if deviceKey provided
+    const body = {
+      DeviceKey: this.deviceKey,
+    };
+    try {
+      const response = await request<Device>(`${this.apiUrlBase}/v2/device`, {
+        method: 'POST',
+        headers: this.makeHeaders(),
+        body: JSON.stringify(body),
+      });
+
+      this.deviceToken = response.result.DeviceToken;
+      this.deviceKey = response.result.DeviceKey;
+      this.deviceId = response.result.DeviceID;
+    } catch (reason) {
+      return Promise.reject(reason);
     }
-    const domains = request<Domain[]>('/v2/concept/domain', {
-      method: 'GET',
-      headers: this.makeHeaders(),
-    });
-    return domains;
   }
 
-  public generateVanity(url: string): Promise<Vanity> {
+  public async getDomains(): Promise<ActiveDomain[]> {
     if (!this.isInit) {
-      throw new Error('WildlinkClient has not been initialized yet');
+      return Promise.reject(
+        ApplicationErrorResponse('WildlinkClient has not been initialized yet'),
+      );
     }
+
+    const response = await request<ActiveDomain[]>(
+      `${this.dataUrlBase}/${this.applicationId}/active-domain/1`,
+      { method: 'GET' },
+    );
+
+    return response.result;
+  }
+
+  public async generateVanity(
+    url: string,
+    activeDomain: ActiveDomain,
+    placementDetail?: string,
+  ): Promise<Vanity> {
+    if (!this.isInit) {
+      return Promise.reject(
+        ApplicationErrorResponse('WildlinkClient has not been initialized yet'),
+      );
+    }
+
     if (!url) {
-      throw new Error('No URL provided');
+      return Promise.reject(ApplicationErrorResponse('No URL provided'));
     }
+
+    if (!activeDomain) {
+      return Promise.reject(
+        ApplicationErrorResponse('No ActiveDomain provided'),
+      );
+    }
+
+    if (url.indexOf(activeDomain.Domain) < 0) {
+      return Promise.reject(
+        ApplicationErrorResponse('URL does not match ActiveDomain'),
+      );
+    }
+
+    let Placement = 'js-client';
+
+    if (placementDetail) {
+      Placement = `${Placement}_${placementDetail}`;
+    }
+
     const body = {
       URL: url,
-      Placement: 'js-client',
+      Placement,
     };
-    const vanity = request<Vanity>('/v2/vanity', {
-      method: 'POST',
-      headers: this.makeHeaders(),
-      body: JSON.stringify(body),
-    });
-    return vanity;
+
+    try {
+      const response = await request<Vanity>(`${this.apiUrlBase}/v2/vanity`, {
+        method: 'POST',
+        headers: this.makeHeaders(),
+        body: JSON.stringify(body),
+      });
+
+      return response.result;
+    } catch (reason) {
+      if (reason.status && reason.status >= 500) {
+        return this.generateOfflineVanity(url, activeDomain);
+      } else {
+        return Promise.reject(reason);
+      }
+    }
+  }
+
+  private generateOfflineVanity(
+    url: string,
+    activeDomain: ActiveDomain,
+  ): Vanity {
+    return {
+      VanityURL: `${this.vanityUrlBase}/e?
+      d=${this.deviceId}&
+      c=${activeDomain.ID}&
+      url=${encodeURIComponent(url)}&`,
+      OriginalURL: url,
+    };
   }
 }
+
+export { Device, ActiveDomain, Vanity, UrlBaseConfig };
