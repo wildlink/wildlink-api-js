@@ -46,3 +46,7 @@ export interface UrlBaseConfig {
   data?: string;
   vanity?: string;
 }
+
+export interface Sender {
+  SenderToken: string;
+}

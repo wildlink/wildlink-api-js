@@ -75,7 +75,7 @@ WLClient.getDomains().then((domains) => {
       DerivedRate: {
         Kind: "PERCENTAGE",
         Amount: "0.75",
-      }
+      },
       MaxRate: {
         Kind: "PERCENTAGE",
         Amount: "0.5",
@@ -124,7 +124,7 @@ const domain =   {
     DerivedRate: {
       Kind: "PERCENTAGE",
       Amount: "0.75",
-    }
+    },
     MaxRate: {
       Kind: "PERCENTAGE",
       Amount: "0.5",
