@@ -6,6 +6,7 @@ import {
   ActiveDomain,
   Vanity,
   UrlBaseConfig,
+  Sender,
 } from './types/api';
 import {
   API_URL_BASE,
@@ -221,6 +222,37 @@ export class WildlinkClient {
       url=${encodeURIComponent(url)}&`,
       OriginalURL: url,
     };
+  }
+
+  public async makeSenderFromPaypal(code: string): Promise<Sender> {
+    if (!this.isInit) {
+      return Promise.reject(
+        ApplicationErrorResponse('WildlinkClient has not been initialized yet'),
+      );
+    }
+
+    if (!code) {
+      return Promise.reject(ApplicationErrorResponse('No code provided'));
+    }
+
+    const body = {
+      code,
+    };
+
+    try {
+      const response = await request<Sender>(
+        `${this.apiUrlBase}/v2/sender/oauth/paypal`,
+        {
+          method: 'POST',
+          headers: this.makeHeaders(),
+          body: JSON.stringify(body),
+        },
+      );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
   }
 }
 
