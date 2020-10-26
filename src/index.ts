@@ -211,15 +211,14 @@ export class WildlinkClient {
     }
   }
 
-  private generateOfflineVanity(
+  public generateOfflineVanity(
     url: string,
     activeDomain: ActiveDomain,
   ): Vanity {
     return {
-      VanityURL: `${this.vanityUrlBase}/e?
-      d=${this.deviceId}&
-      c=${activeDomain.ID}&
-      url=${encodeURIComponent(url)}&`,
+      VanityURL: `${this.vanityUrlBase}/e?d=${this.deviceId}&c=${
+        activeDomain.ID
+      }&url=${encodeURI(url)}`,
       OriginalURL: url,
     };
   }
