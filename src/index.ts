@@ -7,6 +7,11 @@ import {
   Vanity,
   UrlBaseConfig,
   Sender,
+  ActiveDomainMerchant,
+  Merchant,
+  MerchantImage,
+  FeaturedMerchantCategory,
+  MerchantRateDetail,
 } from './types/api';
 import {
   API_URL_BASE,
@@ -142,18 +147,57 @@ export class WildlinkClient {
   }
 
   public async getDomains(): Promise<ActiveDomain[]> {
-    if (!this.isInit) {
-      return Promise.reject(
-        ApplicationErrorResponse('WildlinkClient has not been initialized yet'),
+    try {
+      const response = await request<ActiveDomain[]>(
+        `${this.dataUrlBase}/${this.applicationId}/active-domain/1`,
+        { method: 'GET' },
       );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
     }
+  }
 
-    const response = await request<ActiveDomain[]>(
-      `${this.dataUrlBase}/${this.applicationId}/active-domain/1`,
-      { method: 'GET' },
-    );
+  public async getFeaturedMerchantCategories(): Promise<
+    FeaturedMerchantCategory[]
+  > {
+    try {
+      const response = await request<FeaturedMerchantCategory[]>(
+        `${this.dataUrlBase}/${this.applicationId}/featured-merchant/1`,
+        { method: 'GET' },
+      );
 
-    return response.result;
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+
+  public async getMerchants(): Promise<Merchant[]> {
+    try {
+      const response = await request<Merchant[]>(
+        `${this.dataUrlBase}/${this.applicationId}/merchant/1`,
+        { method: 'GET' },
+      );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+
+  public async getMerchantRateDetails(): Promise<MerchantRateDetail> {
+    try {
+      const response = await request<MerchantRateDetail>(
+        `${this.dataUrlBase}/${this.applicationId}/merchant-rate/1`,
+        { method: 'GET' },
+      );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
   }
 
   public async generateVanity(
@@ -255,4 +299,14 @@ export class WildlinkClient {
   }
 }
 
-export { Device, ActiveDomain, Vanity, UrlBaseConfig };
+export {
+  Device,
+  ActiveDomain,
+  Vanity,
+  UrlBaseConfig,
+  ActiveDomainMerchant,
+  Merchant,
+  MerchantImage,
+  FeaturedMerchantCategory,
+  MerchantRateDetail,
+};
