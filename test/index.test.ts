@@ -75,18 +75,6 @@ describe('WildlinkClient', (): void => {
     it('should be defined', (): void => {
       expect(WLClient.getDomains).toBeInstanceOf(Function);
     });
-    it('should reject since client is not initialized yet', async (): Promise<
-      void
-    > => {
-      try {
-        await WLClient.getDomains();
-        expect((): void => {}).toBeCalledTimes(0);
-      } catch (error) {
-        expect(error.result).toBeFalsy();
-        expect(typeof error.body).toBe('string');
-        expect(error.status).toBe(undefined);
-      }
-    });
   });
   describe('generateVanity()', (): void => {
     const activeDomain: ActiveDomain = {
