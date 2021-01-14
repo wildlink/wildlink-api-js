@@ -18,7 +18,9 @@ import {
   DATA_URL_BASE,
   VANITY_URL_BASE,
 } from './helpers/constants';
-import { version } from '../package.json';
+
+// we track the version this way because importing the package.json causes issues
+export const VERSION = '3.0.1';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -34,7 +36,7 @@ export class WildlinkClient {
   private makeHeaders(): ApiHeaders {
     const headers = {
       'Content-Type': 'application/json',
-      'WF-User-Agent': `js-client-${version}`,
+      'WF-User-Agent': `js-client-${VERSION}`,
       'WF-Secret': this.secret,
       'WF-Device-Token': this.deviceToken,
       'WF-App-ID': String(this.applicationId),
