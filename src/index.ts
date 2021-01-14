@@ -18,6 +18,7 @@ import {
   DATA_URL_BASE,
   VANITY_URL_BASE,
 } from './helpers/constants';
+import { version } from '../package.json';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -33,7 +34,7 @@ export class WildlinkClient {
   private makeHeaders(): ApiHeaders {
     const headers = {
       'Content-Type': 'application/json',
-      'WF-User-Agent': 'js-client',
+      'WF-User-Agent': `js-client-${version}`,
       'WF-Secret': this.secret,
       'WF-Device-Token': this.deviceToken,
       'WF-App-ID': String(this.applicationId),
