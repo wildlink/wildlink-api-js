@@ -3,7 +3,8 @@
 import 'mocha';
 import expect from 'expect';
 
-import { WildlinkClient, ActiveDomain } from '../src';
+import { WildlinkClient, ActiveDomain, VERSION } from '../src';
+import { version } from '../package.json';
 
 const SECRET = 'SECRET';
 const DEVICE_ID = 0;
@@ -16,6 +17,11 @@ const DEVICE = {
 };
 
 describe('WildlinkClient', (): void => {
+  describe('VERSION', (): void => {
+    it('should match the version in the package.json', () => {
+      expect(VERSION).toEqual(version);
+    });
+  });
   describe('constructor', (): void => {
     it('should throw if no secret', (): void => {
       try {
