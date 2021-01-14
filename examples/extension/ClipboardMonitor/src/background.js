@@ -2,8 +2,7 @@
 import 'regenerator-runtime';
 import browser from 'webextension-polyfill';
 
-// latest version
-import { WildlinkClient } from '../../../../src/index';
+import { WildlinkClient } from 'wildlink-js-client';
 
 import ClipboardMonitor from './ClipboardMonitor';
 
