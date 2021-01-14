@@ -1,4 +1,4 @@
-# wildlink-js-client (v2)
+# wildlink-js-client
 
 JavaScript Client Library for working with Wildfire/Wildlink APIs client side. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
 
@@ -24,16 +24,9 @@ const { WildlinkClient } = require('wildlink-js-client');
 // 2. Create instance of WildlinkClient
 const WLClient = new WildlinkClient(SECRET, APP_ID);
 
-// device is optional and a new device will be created if it is omitted
-const device = {
-  DeviceID: DEVICE_ID,
-  DeviceToken: DEVICE_TOKEN,
-  DeviceKey: DEVICE_KEY,
-}
-
-// 3. Initialize
-WLClient.init(device).then(() => {
-  // device should be persisted after creation for client reinitialization
+// 3. Initialize (create new device)
+WLClient.init().then(() => {
+  // device should be persisted after creation for client reinitialization so all reporting data maps back to the same device
   const newDevice = WLClient.getDevice();
   const {
     DeviceID,
@@ -44,6 +37,20 @@ WLClient.init(device).then(() => {
   const deviceId = WLClient.getDeviceId();
   // 4. Make API requests (see below)
 });
+```
+
+```js
+// 5. Reinitialize (recreate device)
+// device should be pulled from persistent storage
+const device = {
+  DeviceID: DEVICE_ID,
+  DeviceToken: DEVICE_TOKEN,
+  DeviceKey: DEVICE_KEY,
+}
+WLClient.init(device).then(() => {
+  // consume client
+}
+
 ```
 
 To obtain a `SECRET` and `APP_ID`, please contact support@wildlink.me for more information.
@@ -103,6 +110,63 @@ WLClient.getDomains().then((domains) => {
   },
   ...
 ]
+```
+
+### Get Supported Merchants
+
+```js
+WLClient.getMerchants().then((merchants) => {
+  // consume array of merchants
+});
+```
+
+```js
+enum MerchantImageKind {
+  Logo = 'LOGO',
+  Featured = 'FEATURED',
+}
+interface MerchantImage {
+  ID: number;
+  Kind: MerchantImageKind;
+  Ordinal: number;
+  ImageID: number;
+  URL: string;
+  Width: number;
+  Height: number;
+}
+interface Merchant {
+  ID: number;
+  Name: string;
+  Images: MerchantImage[];
+}
+```
+
+### Get Merchant Rate Details
+
+```js
+WLClient.getMerchantRateDetails().then((merchantRateDetails) => {
+  // consume map of merchantRateDetails
+});
+```
+
+```js
+type RateKindMap = {
+  [PERCENTAGE]: undefined;
+  [FLAT]: string;
+};
+interface RateDetail<K extends keyof RateKindMap> {
+  ID: number;
+  Name: string;
+  Kind: K;
+  Currency: RateKindMap[K];
+  Amount: string;
+}
+interface MerchantRateDetail {
+  [MerchantID: string]: (
+    | RateDetail<typeof PERCENTAGE>
+    | RateDetail<typeof FLAT>)[];
+}
+
 ```
 
 ### Generate Vanity URL
