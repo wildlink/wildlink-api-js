@@ -20,7 +20,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.0.1';
+export const VERSION = '3.0.2';
 
 export class WildlinkClient {
   private applicationId: number;
