@@ -32,6 +32,7 @@ export class WildlinkClient {
   private apiUrlBase: string;
   private dataUrlBase: string;
   private vanityUrlBase: string;
+  private currencyCode?: string | null;
 
   private makeHeaders(): ApiHeaders {
     const headers = {
@@ -72,6 +73,7 @@ export class WildlinkClient {
     this.apiUrlBase = api;
     this.dataUrlBase = data;
     this.vanityUrlBase = vanity;
+    this.currencyCode = null;
   }
 
   public async init(
@@ -80,6 +82,7 @@ export class WildlinkClient {
       DeviceToken: '',
       DeviceKey: '',
     },
+    currencyCode: string | null = null,
   ): Promise<void> {
     if (this.isInit) {
       return Promise.reject(
@@ -91,7 +94,7 @@ export class WildlinkClient {
     this.deviceId = DeviceID;
     this.deviceToken = DeviceToken;
     this.deviceKey = DeviceKey;
-
+    this.currencyCode = currencyCode;
     if (DeviceToken === '') {
       try {
         await this.createDevice();
@@ -133,6 +136,7 @@ export class WildlinkClient {
     // create or recreate device depending if deviceKey provided
     const body = {
       DeviceKey: this.deviceKey,
+      Currency: this.currencyCode,
     };
     try {
       const response = await request<Device>(`${this.apiUrlBase}/v2/device`, {
