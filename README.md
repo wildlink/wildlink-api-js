@@ -28,11 +28,7 @@ const WLClient = new WildlinkClient(SECRET, APP_ID);
 WLClient.init().then(() => {
   // device should be persisted after creation for client reinitialization so all reporting data maps back to the same device
   const newDevice = WLClient.getDevice();
-  const {
-    DeviceID,
-    DeviceToken,
-    DeviceKey,
-  } = newDevice;
+  const { DeviceID, DeviceToken, DeviceKey } = newDevice;
   // deviceId is used for referencing the device in reporting data
   const deviceId = WLClient.getDeviceId();
   // 4. Make API requests (see below)
@@ -174,31 +170,49 @@ interface MerchantRateDetail {
 The `generateVanity` function converts a URL (to a product, listing, etc. on a supported domain) to a `wild.link` URL with embedded tracking for the given device.
 
 ```js
-// entry from getDomains() that matches the domain to be converted
-const domain =   {
+// example Eligible Domain from getDomains() that matches the url to be converted
+{
   ID: 1991737,
-  Domain: "target.com",
+  Domain: 'target.com',
   Merchant: {
     ID: 5482877,
-    Name: "Target",
+    Name: 'Target',
     DefaultRate: {
-      Kind: "PERCENTAGE",
-      Amount: "0.5",
+      Kind: 'PERCENTAGE',
+      Amount: '0.5',
     },
     DerivedRate: {
-      Kind: "PERCENTAGE",
-      Amount: "0.75",
+      Kind: 'PERCENTAGE',
+      Amount: '0.75',
     },
     MaxRate: {
-      Kind: "PERCENTAGE",
-      Amount: "0.5",
-    }
-  }
+      Kind: 'PERCENTAGE',
+      Amount: '0.5',
+    },
+  },
 };
 
-WLClient.generateVanity('https://www.target.com', domain).then((vanity) => {
-  console.log(vanity);
-});
+const url = 'https://www.nixon.com/us/en/gamma-backpack/C3024-000-00.html#start=1';
+
+WLClient.getDomains().then(domains => {
+  for (let i = 0; i < domains.length; i++) {
+    // find the Eligible Domain that matches the domain.tld of the url
+    if (parseUrl(url) === domains[i].Domain) {
+      return domains[i];
+    } else {
+      return null
+    }
+  }
+}).then(eligibleDomain => {
+  if (eligibleDomain) {
+    WLClient.generateVanity(url, eligibleDomain)
+      .then(vanity => {
+        console.log(vanity);
+      })
+  } else {
+    // not an eligible domain
+  }
+};
 ```
 
 #### Example Return
@@ -214,11 +228,11 @@ WLClient.generateVanity('https://www.target.com', domain).then((vanity) => {
 
 Error/Rejection reasons are in the following format and include application or network level errors:
 
-| Name        | Type                         | Description
-| -           | -                            | -
-| status      | `number` \| `undefined`      | HTTP status
-| body        | `string`                     | The raw response string
-| result      | `*`                          | The JSON-parsed result. `false` if not parse-able.
+| Name   | Type                    | Description                                        |
+| ------ | ----------------------- | -------------------------------------------------- |
+| status | `number` \| `undefined` | HTTP status                                        |
+| body   | `string`                | The raw response string                            |
+| result | `*`                     | The JSON-parsed result. `false` if not parse-able. |
 
 ### Promises
 
@@ -255,7 +269,6 @@ try {
 Check out examples for implementation details.
 
 [Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)
-
 
 ## Documentation
 
