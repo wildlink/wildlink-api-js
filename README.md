@@ -167,61 +167,80 @@ interface MerchantRateDetail {
 
 ### Generate Vanity URL
 
-The `generateVanity` function converts a URL (to a product, listing, etc. on a supported domain) to a `wild.link` URL with embedded tracking for the given device.
+The `generateVanity` function converts a URL from a product page or listing on a supported domain into a `wild.link` URL with embedded tracking for the given device.
 
 ```js
-// example Eligible Domain from getDomains() that matches the url to be converted
-{
-  ID: 1991737,
-  Domain: 'target.com',
+const url =
+  'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846';
+
+// See example below of how to get the URL's domain object
+const domain = {
+  ID: 5520356,
+  Domain: 'johnnycupcakes.com',
   Merchant: {
-    ID: 5482877,
-    Name: 'Target',
+    ID: 6941,
+    Name: 'Johnny Cupcakes',
     DefaultRate: {
       Kind: 'PERCENTAGE',
-      Amount: '0.5',
+      Amount: '6.5',
     },
-    DerivedRate: {
-      Kind: 'PERCENTAGE',
-      Amount: '0.75',
-    },
+    DerivedRate: null,
     MaxRate: {
       Kind: 'PERCENTAGE',
-      Amount: '0.5',
+      Amount: '6.5',
     },
   },
 };
 
-const url = 'https://www.nixon.com/us/en/gamma-backpack/C3024-000-00.html#start=1';
-
-WLClient.getDomains().then(domains => {
-  for (let i = 0; i < domains.length; i++) {
-    // find the Eligible Domain that matches the domain.tld of the url
-    if (parseUrl(url) === domains[i].Domain) {
-      return domains[i];
-    } else {
-      return null
-    }
-  }
-}).then(eligibleDomain => {
-  if (eligibleDomain) {
-    WLClient.generateVanity(url, eligibleDomain)
-      .then(vanity => {
-        console.log(vanity);
-      })
-  } else {
-    // not an eligible domain
-  }
-};
+// Pass in the URL and the domain object
+WLClient.generateVanity(url, domain).then((vanity) => {
+  console.log(vanity);
+});
 ```
 
 #### Example Return
 
 ```js
 {
-  OriginalURL: "https://target.com",
-  VanityURL: "https://wild.link/target/AP_sBQ"
+  OriginalURL: 'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846',
+  VanityURL: 'https://wild.link/johnnycupcakes/AP7siwE'
 }
+```
+
+### How to get the URL's domain object (there are many ways to do this)
+
+```js
+const { parseDomain, fromUrl } = require('parse-domain');
+
+const url =
+  'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846';
+
+// helper function for parsing the url
+const parseUrl = (url) => {
+  const { domain, topLevelDomains: tld } = parseDomain(fromUrl(url));
+  return `${domain}.${tld}`; // johnnycupcakes.com
+};
+
+WLClient.getDomains()
+  .then((domains) => {
+    // Find the Active Domain object whose Domain property matches the parsed url
+    for (let i = 0; i < domains.length; i++) {
+      if (parseUrl(url) === domains[i].Domain) {
+        return domains[i];
+      }
+    }
+    return null;
+  })
+  .then((activeDomain) => {
+    if (!activeDomain) {
+      // not an eligible domain
+    } else {
+      WLClient.generateVanity(url, activeDomain).then((vanity) => {
+        console.log(vanity);
+      });
+    }
+  })
+  .catch((error) => console.log(error));
 ```
 
 ## Error Handling
