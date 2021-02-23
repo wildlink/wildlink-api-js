@@ -235,14 +235,14 @@ WLClient.init().then(() => {
     })
     .then((activeDomain) => {
       if (!activeDomain) {
-        // not an eligible domain
+        throw 'Not an eligible domain';
       } else {
         WLClient.generateVanity(url, activeDomain).then((vanity) => {
           console.log(vanity);
         });
       }
     })
-    .catch((error) => console.log(error));
+    .catch((e) => console.error(e));
 });
 ```
 
