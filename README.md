@@ -222,26 +222,28 @@ const parseUrl = (url) => {
   return `${domain}.${tld}`; // johnnycupcakes.com
 };
 
-WLClient.getDomains()
-  .then((domains) => {
-    // Find the Active Domain object whose Domain property matches the parsed url
-    for (let i = 0; i < domains.length; i++) {
-      if (parseUrl(url) === domains[i].Domain) {
-        return domains[i];
+WLClient.init().then(() => {
+  WLClient.getDomains()
+    .then((domains) => {
+      // Find the Active Domain object whose Domain property matches the parsed url
+      for (let i = 0; i < domains.length; i++) {
+        if (parseUrl(url) === domains[i].Domain) {
+          return domains[i];
+        }
       }
-    }
-    return null;
-  })
-  .then((activeDomain) => {
-    if (!activeDomain) {
-      // not an eligible domain
-    } else {
-      WLClient.generateVanity(url, activeDomain).then((vanity) => {
-        console.log(vanity);
-      });
-    }
-  })
-  .catch((error) => console.log(error));
+      return null;
+    })
+    .then((activeDomain) => {
+      if (!activeDomain) {
+        // not an eligible domain
+      } else {
+        WLClient.generateVanity(url, activeDomain).then((vanity) => {
+          console.log(vanity);
+        });
+      }
+    })
+    .catch((error) => console.log(error));
+});
 ```
 
 ## Error Handling
