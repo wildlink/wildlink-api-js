@@ -210,6 +210,7 @@ WLClient.generateVanity(url, domain).then((vanity) => {
 ### How to get the URL's domain object (there are many ways to do this)
 
 ```js
+// https://www.npmjs.com/package/parse-domain
 const { parseDomain, fromUrl } = require('parse-domain');
 
 const url =
