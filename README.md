@@ -212,8 +212,11 @@ WLClient.generateVanity(url, domain).then((vanity) => {
 ```js
 // https://www.npmjs.com/package/parse-domain
 const { parseDomain, fromUrl } = require('parse-domain');
+const { WildlinkClient } = require('wildlink-js-client');
 
-const url =
+const WLClient = new WildlinkClient(SECRET, APP_ID);
+
+const productUrl =
   'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846';
 
 // helper function for parsing the url
@@ -227,7 +230,7 @@ WLClient.init().then(() => {
     .then((domains) => {
       // Find the Active Domain object whose Domain property matches the parsed url
       for (let i = 0; i < domains.length; i++) {
-        if (parseUrl(url) === domains[i].Domain) {
+        if (parseUrl(productUrl) === domains[i].Domain) {
           return domains[i];
         }
       }
@@ -237,7 +240,7 @@ WLClient.init().then(() => {
       if (!activeDomain) {
         throw 'Not an eligible domain';
       } else {
-        WLClient.generateVanity(url, activeDomain).then((vanity) => {
+        WLClient.generateVanity(productUrl, activeDomain).then((vanity) => {
           console.log(vanity);
         });
       }
