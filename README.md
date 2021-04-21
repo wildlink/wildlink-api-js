@@ -28,11 +28,7 @@ const WLClient = new WildlinkClient(SECRET, APP_ID);
 WLClient.init().then(() => {
   // device should be persisted after creation for client reinitialization so all reporting data maps back to the same device
   const newDevice = WLClient.getDevice();
-  const {
-    DeviceID,
-    DeviceToken,
-    DeviceKey,
-  } = newDevice;
+  const { DeviceID, DeviceToken, DeviceKey } = newDevice;
   // deviceId is used for referencing the device in reporting data
   const deviceId = WLClient.getDeviceId();
   // 4. Make API requests (see below)
@@ -171,32 +167,33 @@ interface MerchantRateDetail {
 
 ### Generate Vanity URL
 
-The `generateVanity` function converts a URL (to a product, listing, etc. on a supported domain) to a `wild.link` URL with embedded tracking for the given device.
+The `generateVanity` function converts a URL from a product page or listing on a supported domain into a `wild.link` URL with embedded tracking for the given device.
 
 ```js
-// entry from getDomains() that matches the domain to be converted
-const domain =   {
-  ID: 1991737,
-  Domain: "target.com",
+const url =
+  'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846';
+
+// See example below of how to get the URL's domain object
+const domain = {
+  ID: 5520356,
+  Domain: 'johnnycupcakes.com',
   Merchant: {
-    ID: 5482877,
-    Name: "Target",
+    ID: 6941,
+    Name: 'Johnny Cupcakes',
     DefaultRate: {
-      Kind: "PERCENTAGE",
-      Amount: "0.5",
+      Kind: 'PERCENTAGE',
+      Amount: '6.5',
     },
-    DerivedRate: {
-      Kind: "PERCENTAGE",
-      Amount: "0.75",
-    },
+    DerivedRate: null,
     MaxRate: {
-      Kind: "PERCENTAGE",
-      Amount: "0.5",
-    }
-  }
+      Kind: 'PERCENTAGE',
+      Amount: '6.5',
+    },
+  },
 };
 
-WLClient.generateVanity('https://www.target.com', domain).then((vanity) => {
+// Pass in the URL and the domain object
+WLClient.generateVanity(url, domain).then((vanity) => {
   console.log(vanity);
 });
 ```
@@ -205,20 +202,62 @@ WLClient.generateVanity('https://www.target.com', domain).then((vanity) => {
 
 ```js
 {
-  OriginalURL: "https://target.com",
-  VanityURL: "https://wild.link/target/AP_sBQ"
+  OriginalURL: 'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846',
+  VanityURL: 'https://wild.link/johnnycupcakes/AP7siwE'
 }
+```
+
+### How to get the URL's domain object (there are many ways to do this)
+
+```js
+// https://www.npmjs.com/package/parse-domain
+const { parseDomain, fromUrl } = require('parse-domain');
+const { WildlinkClient } = require('wildlink-js-client');
+
+const WLClient = new WildlinkClient(SECRET, APP_ID);
+
+const productUrl =
+  'https://johnnycupcakes.com/collections/all/products/rainbow-sprinkles-pullover?variant=32313522421846';
+
+// helper function for parsing the url
+const parseUrl = (url) => {
+  const { domain, topLevelDomains: tld } = parseDomain(fromUrl(url));
+  return `${domain}.${tld}`; // johnnycupcakes.com
+};
+
+WLClient.init().then(() => {
+  WLClient.getDomains()
+    .then((domains) => {
+      // Find the Active Domain object whose Domain property matches the parsed url
+      for (let i = 0; i < domains.length; i++) {
+        if (parseUrl(productUrl) === domains[i].Domain) {
+          return domains[i];
+        }
+      }
+      return null;
+    })
+    .then((activeDomain) => {
+      if (!activeDomain) {
+        throw 'Not an eligible domain';
+      } else {
+        WLClient.generateVanity(productUrl, activeDomain).then((vanity) => {
+          console.log(vanity);
+        });
+      }
+    })
+    .catch((e) => console.error(e));
+});
 ```
 
 ## Error Handling
 
 Error/Rejection reasons are in the following format and include application or network level errors:
 
-| Name        | Type                         | Description
-| -           | -                            | -
-| status      | `number` \| `undefined`      | HTTP status
-| body        | `string`                     | The raw response string
-| result      | `*`                          | The JSON-parsed result. `false` if not parse-able.
+| Name   | Type                    | Description                                        |
+| ------ | ----------------------- | -------------------------------------------------- |
+| status | `number` \| `undefined` | HTTP status                                        |
+| body   | `string`                | The raw response string                            |
+| result | `*`                     | The JSON-parsed result. `false` if not parse-able. |
 
 ### Promises
 
@@ -255,7 +294,6 @@ try {
 Check out examples for implementation details.
 
 [Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)
-
 
 ## Documentation
 
