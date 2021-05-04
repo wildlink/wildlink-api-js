@@ -23,7 +23,7 @@ export interface ActiveDomainMerchant {
 export interface Rate<K extends keyof RateKindMap> {
   Kind: K;
   Amount: string;
-  Currency: RateKindMap[K];
+  Currency?: RateKindMap[K];
 }
 
 export interface Vanity {
