@@ -55,6 +55,9 @@ To obtain a `SECRET` and `APP_ID`, please contact support@wildlink.me for more i
 
 The `getDomains` function fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call. We can let the browser handle the caching for this call since the domains are served off a CDN.
 
+
+[Here is an example implementation that matches a url to a Supported Merchant Domain](https://github.com/wildlink/wildlink-js-client/tree/master/examples/match-active-domain/)
+
 ```js
 WLClient.getDomains().then((domains) => {
   console.log(domains);
@@ -107,6 +110,7 @@ WLClient.getDomains().then((domains) => {
   ...
 ]
 ```
+
 
 ### Get Supported Merchants
 
@@ -209,6 +213,8 @@ WLClient.generateVanity(url, domain).then((vanity) => {
 
 ### How to get the URL's domain object (there are many ways to do this)
 
+[For another example, take a look at our application that matches a url to a domain](https://github.com/wildlink/wildlink-js-client/tree/master/examples/match-active-domain/)
+
 ```js
 // https://www.npmjs.com/package/parse-domain
 const { parseDomain, fromUrl } = require('parse-domain');
@@ -248,6 +254,8 @@ WLClient.init().then(() => {
     .catch((e) => console.error(e));
 });
 ```
+
+
 
 ## Error Handling
 
@@ -294,6 +302,9 @@ try {
 Check out examples for implementation details.
 
 [Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)
+
+[Matching a URL to an Active Domain](https://github.com/wildlink/wildlink-js-client/tree/master/examples/match-active-domain/)
+
 
 ## Documentation
 

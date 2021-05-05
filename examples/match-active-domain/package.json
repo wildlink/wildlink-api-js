@@ -1,0 +1,16 @@
+{
+  "name": "match-active-domain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/browserify index.js > main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "wildlink-js-client": "^3.1.0"
+  }
+}
