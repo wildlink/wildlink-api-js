@@ -12,6 +12,7 @@ import {
   MerchantImage,
   FeaturedMerchantCategory,
   MerchantRateDetail,
+  StandDownPolicy,
 } from './types/api';
 import {
   API_URL_BASE,
@@ -20,7 +21,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.1';
+export const VERSION = '3.1.2';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -181,6 +182,19 @@ export class WildlinkClient {
     }
   }
 
+  public async getStandDownPolicy(): Promise<StandDownPolicy> {
+    try {
+      const response = await request<StandDownPolicy>(
+        `${this.dataUrlBase}/${this.applicationId}/stand-down-policy/1`,
+        { method: 'GET' },
+      );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+
   public async getMerchants(): Promise<Merchant[]> {
     try {
       const response = await request<Merchant[]>(
@@ -315,5 +329,6 @@ export {
   Merchant,
   MerchantImage,
   FeaturedMerchantCategory,
+  StandDownPolicy,
   MerchantRateDetail,
 };
