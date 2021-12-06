@@ -77,6 +77,11 @@ export interface FeaturedMerchantCategory {
   MerchantIDs: Merchant['ID'];
 }
 
+export interface StandDownPolicy {
+  Domains: string[];
+  Params: string[];
+}
+
 export interface RateDetail<K extends keyof RateKindMap> {
   ID: number;
   Name: string;
