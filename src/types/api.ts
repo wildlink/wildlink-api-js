@@ -80,6 +80,7 @@ export interface FeaturedMerchantCategory {
 export interface StandDownPolicy {
   Domains: string[];
   Params: string[];
+  Serp: string[];
 }
 
 export interface RateDetail<K extends keyof RateKindMap> {
