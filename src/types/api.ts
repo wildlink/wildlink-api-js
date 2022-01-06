@@ -74,7 +74,7 @@ export interface Merchant {
 
 export interface FeaturedMerchantCategory {
   Name: string;
-  MerchantIDs: Merchant['ID'];
+  MerchantIDs: Merchant['ID'][];
 }
 
 export interface StandDownPolicy {
