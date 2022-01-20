@@ -51,6 +51,11 @@ export interface Sender {
   SenderToken: string;
 }
 
+export interface PartnerSender {
+  SenderToken: string;
+  TrackingCode: string;
+}
+
 enum MerchantImageKind {
   Logo = 'LOGO',
   Featured = 'FEATURED',
@@ -94,5 +99,6 @@ export interface RateDetail<K extends keyof RateKindMap> {
 export interface MerchantRateDetail {
   [MerchantID: string]: (
     | RateDetail<typeof PERCENTAGE>
-    | RateDetail<typeof FLAT>)[];
+    | RateDetail<typeof FLAT>
+  )[];
 }
