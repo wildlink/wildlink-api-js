@@ -1,6 +1,6 @@
 {
   "name": "wildlink-js-client",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "description": "A simple JavaScript client library for the Wildlink API (learn more at https://www.wildlink.me/)",
   "homepage": "https://www.wildlink.me",
   "repository": "https://github.com/wildlink/wildlink-js-client.git",

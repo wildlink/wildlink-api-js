@@ -7,6 +7,7 @@ import {
   Vanity,
   UrlBaseConfig,
   Sender,
+  PartnerSender,
   ActiveDomainMerchant,
   Merchant,
   MerchantImage,
@@ -21,7 +22,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.5';
+export const VERSION = '3.1.6';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -319,7 +320,7 @@ export class WildlinkClient {
     }
   }
 
-  public async makeSenderFromPartner(code: string): Promise<Sender> {
+  public async makeSenderFromPartner(code: string): Promise<PartnerSender> {
     if (!this.isInit) {
       return Promise.reject(
         ApplicationErrorResponse('WildlinkClient has not been initialized yet'),
@@ -335,7 +336,7 @@ export class WildlinkClient {
     };
 
     try {
-      const response = await request<Sender>(
+      const response = await request<PartnerSender>(
         `${this.apiUrlBase}/v2/sender/oauth/partner`,
         {
           method: 'POST',
@@ -360,6 +361,8 @@ export {
   Merchant,
   MerchantImage,
   FeaturedMerchantCategory,
+  Sender,
+  PartnerSender,
   StandDownPolicy,
   MerchantRateDetail,
 };
