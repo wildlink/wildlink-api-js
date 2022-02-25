@@ -4,6 +4,12 @@ export interface ActiveDomain {
   Merchant: ActiveDomainMerchant;
 }
 
+export interface AlternateDomain {
+  Domain: string;
+  Company: string;
+  AlternateMerchantIDs: number[];
+}
+
 const PERCENTAGE = 'PERCENTAGE';
 const FLAT = 'FLAT';
 
@@ -15,8 +21,6 @@ type RateKindMap = {
 export interface ActiveDomainMerchant {
   ID: number;
   Name: string;
-  DefaultRate: Rate<typeof PERCENTAGE> | Rate<typeof FLAT> | null;
-  DerivedRate: Rate<typeof PERCENTAGE> | Rate<typeof FLAT> | null;
   MaxRate: Rate<typeof PERCENTAGE> | Rate<typeof FLAT> | null;
 }
 
