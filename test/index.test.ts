@@ -89,8 +89,6 @@ describe('WildlinkClient', (): void => {
       Merchant: {
         ID: 321,
         Name: 'Test',
-        DefaultRate: null,
-        DerivedRate: null,
         MaxRate: null,
       },
     };

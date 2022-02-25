@@ -4,6 +4,7 @@ import {
   ApiHeaders,
   Device,
   ActiveDomain,
+  AlternateDomain,
   Vanity,
   UrlBaseConfig,
   Sender,
@@ -22,7 +23,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.6';
+export const VERSION = '3.1.7';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -159,6 +160,18 @@ export class WildlinkClient {
     try {
       const response = await request<ActiveDomain[]>(
         `${this.dataUrlBase}/${this.applicationId}/active-domain/1`,
+        { method: 'GET' },
+      );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+  public async getAlternates(): Promise<AlternateDomain[]> {
+    try {
+      const response = await request<AlternateDomain[]>(
+        `${this.dataUrlBase}/${this.applicationId}/alternative-domains/1`,
         { method: 'GET' },
       );
 
@@ -355,6 +368,7 @@ export class WildlinkClient {
 export {
   Device,
   ActiveDomain,
+  AlternateDomain,
   Vanity,
   UrlBaseConfig,
   ActiveDomainMerchant,
