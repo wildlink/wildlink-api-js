@@ -53,10 +53,10 @@ export interface UrlBaseConfig {
 
 export interface Sender {
   SenderToken: string;
+  SenderID: number;
 }
 
-export interface PartnerSender {
-  SenderToken: string;
+export interface PartnerSender extends Sender {
   TrackingCode: string;
 }
 
