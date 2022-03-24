@@ -79,6 +79,15 @@ export interface Merchant {
   ID: number;
   Name: string;
   Images: MerchantImage[];
+  PaysNewCustomersOnly: boolean;
+  ShareAndEarnDisabled: boolean;
+  Categories: Category[];
+}
+
+export interface Category {
+  ID: number;
+  Name: string;
+  ParentID: number;
 }
 
 export interface FeaturedMerchantCategory {
