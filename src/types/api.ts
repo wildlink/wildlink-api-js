@@ -82,6 +82,7 @@ export interface Merchant {
   PaysNewCustomersOnly: boolean;
   ShareAndEarnDisabled: boolean;
   Categories: Category[];
+  Score: number;
 }
 
 export interface Category {
