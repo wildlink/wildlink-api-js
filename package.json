@@ -1,6 +1,6 @@
 {
   "name": "wildlink-js-client",
-  "version": "3.1.10",
+  "version": "3.1.11",
   "description": "A simple JavaScript client library for the Wildlink API (learn more at https://www.wildlink.me/)",
   "homepage": "https://www.wildlink.me",
   "repository": "https://github.com/wildlink/wildlink-js-client.git",
@@ -23,19 +23,19 @@
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
-    "isomorphic-fetch": "^2.2.1"
+    "isomorphic-fetch": "^3.0.0"
   },
   "devDependencies": {
     "@types/isomorphic-fetch": "^0.0.35",
-    "@types/jest": "^24.0.15",
+    "@types/jest": "^27.5.1",
     "@types/mocha": "^5.2.7",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
-    "eslint": "^6.8.0",
+    "eslint": "^8.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "expect": "^24.7.1",
-    "mocha": "^6.1.4",
+    "expect": "^27.5.1",
+    "mocha": "^10.0.0",
     "prettier": "^1.16.4",
     "ts-node": "^8.3.0",
     "typescript": "^3.7.5"
