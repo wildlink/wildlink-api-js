@@ -24,7 +24,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.11';
+export const VERSION = '3.1.12';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -223,12 +223,19 @@ export class WildlinkClient {
     }
   }
 
-  public async getMerchantRateDetails(): Promise<MerchantRateDetail> {
+  public async getMerchantRateDetails(
+    lang?: string,
+  ): Promise<MerchantRateDetail> {
     try {
-      const response = await request<MerchantRateDetail>(
+      const url = new URL(
         `${this.dataUrlBase}/${this.applicationId}/merchant-rate/1`,
-        { method: 'GET' },
       );
+      if (lang) {
+        url.searchParams.append('translation_language', lang);
+      }
+      const response = await request<MerchantRateDetail>(url.toString(), {
+        method: 'GET',
+      });
 
       return response.result;
     } catch (reason) {

@@ -7,6 +7,8 @@ build
 
 #logs
 *.log
+*.tgz
+package
 
 #build
 /lib
