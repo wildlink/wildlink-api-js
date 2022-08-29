@@ -16,6 +16,8 @@ import {
   FeaturedMerchantCategory,
   MerchantRateDetail,
   StandDownPolicy,
+  DeviceXIDSource,
+  DeviceXIDResponse,
 } from './types/api';
 import {
   API_URL_BASE,
@@ -24,7 +26,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.12';
+export const VERSION = '3.1.13';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -152,6 +154,29 @@ export class WildlinkClient {
       this.deviceToken = response.result.DeviceToken;
       this.deviceKey = response.result.DeviceKey;
       this.deviceId = response.result.DeviceID;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+
+  public async updateDeviceXID(
+    source: DeviceXIDSource,
+    value: string,
+  ): Promise<DeviceXIDResponse> {
+    const body = {
+      Source: source,
+      Value: value,
+    };
+    try {
+      const response = await request<DeviceXIDResponse>(
+        `${this.apiUrlBase}/v2/device/xid`,
+        {
+          method: 'POST',
+          headers: this.makeHeaders(),
+          body: JSON.stringify(body),
+        },
+      );
+      return response.result;
     } catch (reason) {
       return Promise.reject(reason);
     }
@@ -419,4 +444,6 @@ export {
   PartnerSender,
   StandDownPolicy,
   MerchantRateDetail,
+  DeviceXIDSource,
+  DeviceXIDResponse,
 };
