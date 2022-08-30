@@ -116,3 +116,13 @@ export interface MerchantRateDetail {
     | RateDetail<typeof FLAT>
   )[];
 }
+
+export enum DeviceXIDSource {
+  FCM_REGISTRATION_TOKEN = 'FCM_REGISTRATION_TOKEN',
+  ONE_SIGNAL_ID = 'ONE_SIGNAL_ID',
+  PARTNER = 'PARTNER',
+}
+
+export interface DeviceXIDResponse {
+  RowsAffected: number;
+}
