@@ -26,15 +26,15 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.13';
+export const VERSION = '3.1.14';
 
 export class WildlinkClient {
   private applicationId: number;
   private secret: string;
   private isInit: boolean;
-  private deviceToken: string;
-  private deviceKey: string;
-  private deviceId: number;
+  protected deviceToken: string;
+  protected deviceKey: string;
+  protected deviceId: number;
   private apiUrlBase: string;
   private dataUrlBase: string;
   private vanityUrlBase: string;
@@ -138,7 +138,7 @@ export class WildlinkClient {
     };
   }
 
-  private async createDevice(): Promise<void> {
+  protected async createDevice(): Promise<void> {
     // create or recreate device depending if deviceKey provided
     const body = {
       DeviceKey: this.deviceKey,
