@@ -63,6 +63,7 @@ export interface PartnerSender extends Sender {
 enum MerchantImageKind {
   Logo = 'LOGO',
   Featured = 'FEATURED',
+  LogoRect = 'LOGORECT'
 }
 
 export interface MerchantImage {
