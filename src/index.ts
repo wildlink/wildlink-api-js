@@ -18,6 +18,7 @@ import {
   StandDownPolicy,
   DeviceXIDSource,
   DeviceXIDResponse,
+  DeviceMetadata,
 } from './types/api';
 import {
   API_URL_BASE,
@@ -26,7 +27,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.1.14';
+export const VERSION = '3.2.0';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -38,7 +39,9 @@ export class WildlinkClient {
   private apiUrlBase: string;
   private dataUrlBase: string;
   private vanityUrlBase: string;
-  private currencyCode?: string | null;
+  private currencyCode?: string;
+  protected installChannel?: string;
+  private os?: string;
 
   private makeHeaders(): ApiHeaders {
     const headers = {
@@ -79,7 +82,6 @@ export class WildlinkClient {
     this.apiUrlBase = api;
     this.dataUrlBase = data;
     this.vanityUrlBase = vanity;
-    this.currencyCode = null;
   }
 
   public async init(
@@ -88,7 +90,7 @@ export class WildlinkClient {
       DeviceToken: '',
       DeviceKey: '',
     },
-    currencyCode: string | null = null,
+    deviceMetaData: DeviceMetadata = {},
   ): Promise<void> {
     if (this.isInit) {
       return Promise.reject(
@@ -100,7 +102,9 @@ export class WildlinkClient {
     this.deviceId = DeviceID;
     this.deviceToken = DeviceToken;
     this.deviceKey = DeviceKey;
-    this.currencyCode = currencyCode;
+    this.currencyCode = deviceMetaData?.CurrencyCode;
+    this.installChannel = deviceMetaData?.InstallChannel;
+    this.os = deviceMetaData?.OS;
     if (DeviceToken === '') {
       try {
         await this.createDevice();
@@ -143,6 +147,8 @@ export class WildlinkClient {
     const body = {
       DeviceKey: this.deviceKey,
       Currency: this.currencyCode,
+      InstallChannel: this.installChannel,
+      OS: this.os,
     };
     try {
       const response = await request<Device>(`${this.apiUrlBase}/v2/device`, {
@@ -446,4 +452,5 @@ export {
   MerchantRateDetail,
   DeviceXIDSource,
   DeviceXIDResponse,
+  DeviceMetadata,
 };
