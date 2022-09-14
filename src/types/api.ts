@@ -41,6 +41,12 @@ export interface Device {
   DeviceID: number;
 }
 
+export interface DeviceMetadata {
+  CurrencyCode?: string;
+  InstallChannel?: string;
+  OS?: string;
+}
+
 export interface ApiHeaders {
   [key: string]: string;
 }
@@ -63,7 +69,7 @@ export interface PartnerSender extends Sender {
 enum MerchantImageKind {
   Logo = 'LOGO',
   Featured = 'FEATURED',
-  LogoRect = 'LOGORECT'
+  LogoRect = 'LOGORECT',
 }
 
 export interface MerchantImage {
