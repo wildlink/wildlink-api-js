@@ -27,7 +27,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.3.0';
+export const VERSION = '3.4.0';
 
 export class WildlinkClient {
   private applicationId: number;
@@ -390,6 +390,37 @@ export class WildlinkClient {
     try {
       const response = await request<Sender>(
         `${this.apiUrlBase}/v2/sender/oauth/google`,
+        {
+          method: 'POST',
+          headers: this.makeHeaders(),
+          body: JSON.stringify(body),
+        },
+      );
+
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+
+  public async makeSenderFromApple(code: string): Promise<Sender> {
+    if (!this.isInit) {
+      return Promise.reject(
+        ApplicationErrorResponse('WildlinkClient has not been initialized yet'),
+      );
+    }
+
+    if (!code) {
+      return Promise.reject(ApplicationErrorResponse('No code provided'));
+    }
+
+    const body = {
+      code,
+    };
+
+    try {
+      const response = await request<Sender>(
+        `${this.apiUrlBase}/v2/sender/oauth/apple`,
         {
           method: 'POST',
           headers: this.makeHeaders(),
