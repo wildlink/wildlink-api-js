@@ -27,23 +27,23 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.4.0';
+export const VERSION = '3.4.1';
 
 export class WildlinkClient {
-  private applicationId: number;
-  private secret: string;
-  private isInit: boolean;
+  protected applicationId: number;
+  protected secret: string;
+  protected isInit: boolean;
   protected deviceToken: string;
   protected deviceKey: string;
   protected deviceId: number;
-  private apiUrlBase: string;
-  private dataUrlBase: string;
-  private vanityUrlBase: string;
-  private currencyCode?: string;
+  protected apiUrlBase: string;
+  protected dataUrlBase: string;
+  protected vanityUrlBase: string;
+  protected currencyCode?: string;
   protected installChannel?: string;
-  private os?: string;
+  protected os?: string;
 
-  private makeHeaders(): ApiHeaders {
+  protected makeHeaders(): ApiHeaders {
     const headers = {
       'Content-Type': 'application/json',
       'WF-User-Agent': `js-client-${VERSION}`,
@@ -515,4 +515,6 @@ export {
   DeviceXIDSource,
   DeviceXIDResponse,
   DeviceMetadata,
+  request,
+  ApplicationErrorResponse,
 };
