@@ -107,6 +107,7 @@ export interface StandDownPolicy {
   Domains: string[];
   Params: string[];
   Serp: string[];
+  LostAttribution: string[];
 }
 
 export interface RateDetail<K extends keyof RateKindMap> {
