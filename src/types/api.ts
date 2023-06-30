@@ -28,6 +28,13 @@ export interface Rate<K extends keyof RateKindMap> {
   Kind: K;
   Amount: string;
   Currency?: RateKindMap[K];
+  BoostedOffer?: BoostedOffer;
+}
+
+export interface BoostedOffer {
+  OriginalMaxRate: string;
+  Multiplier: string;
+  EndDate: string;
 }
 
 export interface Vanity {
