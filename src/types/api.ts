@@ -115,6 +115,9 @@ export interface StandDownPolicy {
   Params: string[];
   Serp: string[];
   LostAttribution: string[];
+  MaxPopCounts: {
+    [Domain: string]: number;
+  };
 }
 
 export interface RateDetail<K extends keyof RateKindMap> {
