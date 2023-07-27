@@ -144,3 +144,19 @@ export enum DeviceXIDSource {
 export interface DeviceXIDResponse {
   RowsAffected: number;
 }
+
+export interface IGiftCardRedeemableBalance {
+  Amount: string;
+  Currency: string;
+}
+
+export interface IGiftCardLinksResponse {
+  Links: IGiftCardLink[];
+}
+export interface IGiftCardLink {
+  SenderID: number;
+  URL: string;
+  Amount: string;
+  Currency: string;
+  CreatedDate: string;
+}

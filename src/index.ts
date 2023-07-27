@@ -19,6 +19,9 @@ import {
   DeviceXIDSource,
   DeviceXIDResponse,
   DeviceMetadata,
+  IGiftCardLink,
+  IGiftCardRedeemableBalance,
+  IGiftCardLinksResponse,
 } from './types/api';
 import {
   API_URL_BASE,
@@ -27,7 +30,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.4.4';
+export const VERSION = '3.5.0';
 
 export class WildlinkClient {
   protected applicationId: number;
@@ -43,14 +46,17 @@ export class WildlinkClient {
   protected installChannel?: string;
   protected os?: string;
 
-  protected makeHeaders(): ApiHeaders {
-    const headers = {
+  protected makeHeaders(senderToken = ''): ApiHeaders {
+    const headers: ApiHeaders = {
       'Content-Type': 'application/json',
       'WF-User-Agent': `js-client-${VERSION}`,
       'WF-Secret': this.secret,
       'WF-Device-Token': this.deviceToken,
       'WF-App-ID': String(this.applicationId),
     };
+    if (senderToken) {
+      headers['WF-Sender-Token'] = senderToken;
+    }
     return headers;
   }
 
@@ -495,6 +501,91 @@ export class WildlinkClient {
       return Promise.reject(reason);
     }
   }
+
+  public async getGiftCardRedeemableBalance(
+    senderToken: string,
+  ): Promise<IGiftCardRedeemableBalance> {
+    try {
+      if (!this.isInit) {
+        return Promise.reject(
+          ApplicationErrorResponse(
+            'WildlinkClient has not been initialized yet',
+          ),
+        );
+      }
+      if (!senderToken) {
+        return Promise.reject(
+          ApplicationErrorResponse('Sender token required'),
+        );
+      }
+      const response = await request<IGiftCardRedeemableBalance>(
+        `${this.apiUrlBase}/v2/device/giftcard/balance`,
+        {
+          method: 'GET',
+          headers: this.makeHeaders(senderToken),
+        },
+      );
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+  public async redeemGiftCardBalance(
+    senderToken: string,
+  ): Promise<IGiftCardLink> {
+    try {
+      if (!this.isInit) {
+        return Promise.reject(
+          ApplicationErrorResponse(
+            'WildlinkClient has not been initialized yet',
+          ),
+        );
+      }
+      if (!senderToken) {
+        return Promise.reject(
+          ApplicationErrorResponse('Sender token required'),
+        );
+      }
+      const response = await request<IGiftCardLink>(
+        `${this.apiUrlBase}/v2/device/giftcard/redeem`,
+        {
+          method: 'POST',
+          headers: this.makeHeaders(senderToken),
+        },
+      );
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
+  public async getGiftCardLinks(
+    senderToken: string,
+  ): Promise<IGiftCardLinksResponse> {
+    try {
+      if (!this.isInit) {
+        return Promise.reject(
+          ApplicationErrorResponse(
+            'WildlinkClient has not been initialized yet',
+          ),
+        );
+      }
+      if (!senderToken) {
+        return Promise.reject(
+          ApplicationErrorResponse('Sender token required'),
+        );
+      }
+      const response = await request<IGiftCardLinksResponse>(
+        `${this.apiUrlBase}/v2/device/giftcard/links`,
+        {
+          method: 'GET',
+          headers: this.makeHeaders(senderToken),
+        },
+      );
+      return response.result;
+    } catch (reason) {
+      return Promise.reject(reason);
+    }
+  }
 }
 
 export {
@@ -515,6 +606,9 @@ export {
   DeviceXIDSource,
   DeviceXIDResponse,
   DeviceMetadata,
+  IGiftCardLink,
+  IGiftCardRedeemableBalance,
+  IGiftCardLinksResponse,
   request,
   ApplicationErrorResponse,
 };
