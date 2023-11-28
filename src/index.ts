@@ -30,7 +30,7 @@ import {
 } from './helpers/constants';
 
 // we track the version this way because importing the package.json causes issues
-export const VERSION = '3.5.0';
+export const VERSION = '3.6.0';
 
 export class WildlinkClient {
   protected applicationId: number;
@@ -338,11 +338,25 @@ export class WildlinkClient {
   public generateOfflineVanity(
     url: string,
     activeDomain: ActiveDomain,
+    options?: {
+      trackingCode?: string;
+      shoppingTripCode?: string;
+    },
   ): Vanity {
+    const vanityUrl = new URL(`${this.vanityUrlBase}/e`);
+    vanityUrl.searchParams.append('d', String(this.deviceId));
+    vanityUrl.searchParams.append('c', String(activeDomain.ID));
+    if (options?.trackingCode) {
+      vanityUrl.searchParams.append('tc', options.trackingCode);
+    }
+    if (options?.shoppingTripCode) {
+      vanityUrl.searchParams.append('sc', options.shoppingTripCode);
+    }
+    vanityUrl.searchParams.sort();
+
+    vanityUrl.searchParams.append('url', url);
     return {
-      VanityURL: `${this.vanityUrlBase}/e?d=${this.deviceId}&c=${
-        activeDomain.ID
-      }&url=${encodeURI(url)}`,
+      VanityURL: vanityUrl.toString(),
       OriginalURL: url,
     };
   }
