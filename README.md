@@ -2,6 +2,10 @@
 
 JavaScript Client Library for working with Wildfire/Wildlink APIs client side. Convert product and brand links into affiliate versions to generate revenue. Learn more at https://www.wildlink.me/.
 
+## Disclaimer
+
+THIS PROJECT IS DEPRECATED AND NO LONGER PUBLICLY SUPPORTED
+
 ## Requirements
 
 - package manager: npm or yarn
@@ -54,7 +58,6 @@ To obtain a `SECRET` and `APP_ID`, please contact support@wildlink.me for more i
 ### Get Supported Merchant Domains
 
 The `getDomains` function fetches all domains that we support and are wildlink-able. These are in the context of the authenticated device that made the call. We can let the browser handle the caching for this call since the domains are served off a CDN.
-
 
 [Here is an example implementation that matches a url to a Supported Merchant Domain](https://github.com/wildlink/wildlink-js-client/tree/master/examples/match-active-domain/)
 
@@ -110,7 +113,6 @@ WLClient.getDomains().then((domains) => {
   ...
 ]
 ```
-
 
 ### Get Supported Merchants
 
@@ -255,8 +257,6 @@ WLClient.init().then(() => {
 });
 ```
 
-
-
 ## Error Handling
 
 Error/Rejection reasons are in the following format and include application or network level errors:
@@ -304,7 +304,6 @@ Check out examples for implementation details.
 [Browser Extension Clipboard Monitor](https://github.com/wildlink/wildlink-js-client/tree/master/examples/extension/ClipboardMonitor)
 
 [Matching a URL to an Active Domain](https://github.com/wildlink/wildlink-js-client/tree/master/examples/match-active-domain/)
-
 
 ## Documentation
 
