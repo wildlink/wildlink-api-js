@@ -3,30 +3,46 @@ on:
   push:
     branches:
       master
+    paths-ignore:
+      - ".github/**"
 jobs:
   push:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Collect Secrets
+        id: op-load-secret
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SA_NPM_TOOLING }}
+          NPM_TOKEN: op://p7ggbiqtkwsqpwbfxyslrgl46u/tctdu656f2fh2pawg4g34qxbnq/credential
+
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '14.19.3'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Cache Node Modules
         id: cache-node-modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           yarn install --freeze-lockfile
+
       - name: Run tests
         run: CI=true yarn test
+
       - name: Publish to NPM
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
