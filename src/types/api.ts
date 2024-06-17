@@ -126,6 +126,7 @@ export interface RateDetail<K extends keyof RateKindMap> {
   Kind: K;
   Currency: RateKindMap[K];
   Amount: string;
+  OriginalRate?: string;
 }
 
 export interface MerchantRateDetail {
