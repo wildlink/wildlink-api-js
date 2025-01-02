@@ -115,6 +115,7 @@ export interface StandDownPolicy {
   Params: string[];
   Serp: string[];
   LostAttribution: string[];
+  PurchaseConfirmation: string[];
   MaxPopCounts: {
     [Domain: string]: number;
   };
