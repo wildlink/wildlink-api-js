@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Use a ⭐️ to indicate a breaking change.
 
+## [3.6.4] - 2025-01-02
+
+### Added
+
+- Added `PurchaseConfirmation` to `StandDownPolicy`
+
 ## [3.6.3] - 2024-06-17
 
 ### Added
